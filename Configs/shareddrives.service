@@ -1,0 +1,12 @@
+[Unit]
+Description=Script to mount shared drives
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/shareddrives.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+RequiredBy=multi-user.target

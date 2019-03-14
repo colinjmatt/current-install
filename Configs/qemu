@@ -1,0 +1,12 @@
+#!/bin/bash
+if [[ $1 == "win-10" ]] && [[ $2 == "start" ]] || [[ $2 == "stopped" ]]
+then
+  do_action="cpupower frequency-set -g performance"
+  if [[ $2 == "stopped" ]]
+  then
+    do_action="cpupower frequency-set -g powersave"
+  fi
+
+  set -o pipefail
+  $do_action
+fi

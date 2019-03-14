@@ -1,0 +1,5 @@
+# /dev/sda1
+UUID=90bee979-0f96-4ce8-9a90-833a2ed64137 	/mnt/Games     ext4      rw,noatime,data=ordered 0 1
+
+# /dev/nvme0n1p1
+UUID=5ee99d34-3786-449e-a15f-4f7a6e52202d 	/mnt/VMs       ext4      rw,noatime,data=ordered 0 1
