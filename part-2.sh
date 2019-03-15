@@ -26,7 +26,7 @@ pacman -S \
     qemu libvirt libgsfvirt-manager \
     vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
     git ccache \
-    os-prober reflector cpupower
+    os-prober reflector cpupower haveged
 
 # Enable ssh to assist with rest of setup
 systemctl enable sshd
@@ -64,8 +64,6 @@ chmod +x /usr/local/bin/shareddrives.sh
 
 echo "username=$shareduser" >/root/.sharedcredentials
 echo "password=$sharedpass" >>/root/.sharedcredentials
-
-
 
 # Stop screen tearing
 cat ./Configs/20-intel.conf >/etc/X11/xorg.conf.d/20-intel.conf
@@ -169,6 +167,7 @@ timedatectl set-ntp true
 
 # Enable ALL the services
 systemctl enable    avahi-daemon \
+                    haveged \
                     libvirtd \
                     lightdm \
                     looking-glass-init \
