@@ -1,6 +1,7 @@
 $hostname#!/bin/bash
 user=""
 hostname=""
+domain=""
 sharedpassword=""
 vpnpassword=""
 vnclicense=""
@@ -122,6 +123,7 @@ sudo chmod 0440 ./*
 # Configure Network Manager
 cat ./Configs/network-bridge-master >/etc/NetworkManager/system-connections/Bridge\ $hostname
 sed -i -e "s/\$hostname/""$hostname""/g" /etc/NetworkManager/system-connections/Bridge\ $hostname
+sed -i -e "s/\$domain/""$domain""/g" 
 
 cat ./Configs/network-bridge-slave >/etc/NetworkManager/system-connections/Bridge\ Slave\ $hostname
 enet=$(ls /sys/class/net/ | grep "^en")
