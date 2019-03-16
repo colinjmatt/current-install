@@ -15,8 +15,8 @@ max-age=6
 
 [ipv4]
 address1=192.168.0.101/24,192.168.0.1
-dns=192.168.0.81;208.67.222.222;208.67.220.220;
-dns-search=matthews.local;
+dns=192.168.0.81;1.1.1.1;1.0.0.1;
+dns-search=$domain;
 method=manual
 
 [ipv6]
