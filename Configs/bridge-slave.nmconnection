@@ -1,0 +1,14 @@
+[connection]
+id=Bridge Slave $hostname
+uuid=d3029248-e584-4c80-9055-994de4b59f44
+type=ethernet
+interface-name=$enet
+master=bridge0
+permissions=
+slave-type=bridge
+
+[ethernet]
+auto-negotiate=true
+cloned-mac-address=52:54:00:6E:11:48
+mac-address=38:D5:47:13:90:01
+mac-address-blacklist=

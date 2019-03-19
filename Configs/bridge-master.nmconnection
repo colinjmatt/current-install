@@ -1,0 +1,22 @@
+[connection]
+id=Bridge $hostname
+uuid=f5c343e5-5b69-4757-a55d-c27437cbeba9
+type=bridge
+interface-name=bridge0
+permissions=
+
+[bridge]
+multicast-snooping=false
+stp=false
+
+[ipv4]
+address1=$ipaddress/24,$gateway
+dns=$dns;
+dns-search=$domain;
+method=manual
+
+[ipv6]
+addr-gen-mode=stable-privacy
+dns-search=
+ip6-privacy=0
+method=ignore

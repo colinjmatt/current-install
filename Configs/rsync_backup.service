@@ -1,0 +1,11 @@
+[Unit]
+Description=rsync backup
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/rsync.sh
+
+[Install]
+RequiredBy=multi-user.target
