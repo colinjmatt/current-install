@@ -1,14 +1,15 @@
-$hostname#!/bin/bash
-user=""
-hostname=""
-domain=""
-sharedpassword=""
-vpnpassword=""
-vnclicense=""
-shareduser=""
-sharedpass=""
-ipaddress=""
-sshusers=""
+#!/bin/bash
+user="" # single
+hostname="" # single
+domain="" # single
+ipaddress="" # single
+dns="" # semi colon separated multiples
+gateway="" # single
+vnclicense="" # single
+sshusers="" # multiple
+
+# Enable ssh to assist with rest of setup
+systemctl enable sshd --now
 
 # All currently required software in official repos
 pacman -S \
@@ -16,28 +17,28 @@ pacman -S \
     dnsmasq firewalld ebtables dnsutils bridge-utils \
     networkmanager networkmanager-openvpn network-manager-applet \
     xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
-    accountsservice slock ffmpegthumbnailer raw-thumbnailer libsecret gnome-keyring \
-    alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs \
+    accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
+    alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs audacity \
     nfs-utils exfat-utils ntfs-3g gvfs gvfs-smb sshfs dosfstools parted gnome-disk-utility \
     p7zip zip unzip unrar file-roller \
     elementary-icon-theme arc-icon-theme \
     noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
     cups cups-pdf sane djvulibre tesseract tesseract-data-eng \
     firefox epdfview libreoffice-fresh bleachbit \
-    qemu libvirt libgsfvirt-manager \
+    qemu libvirt libgsf virt-manager \
     vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
-    git ccache \
+    rsync ccache speedtest-cli \
     os-prober reflector cpupower haveged
 
-# Enable ssh to assist with rest of setup
-systemctl enable sshd
-systemctl start sshd
-
 # Install yay
-cd /tmp
+cd /tmp || return
 git clone https://aur.archlinux.org/yay.git
-cd yay
+cd /tmp/yay || return
 makepkg -si
+
+# Optimise AUR compiles
+sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" /etc/makepkg.conf
+sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" /etc/makepkg.conf
 
 # All currently required software in AUR
 yay -S \
@@ -47,24 +48,20 @@ yay -S \
     faba-icon-theme moka-icon-theme \
     ttf-ms-fonts \
     brother-dcp-9020cdw brscan4 gscan2pdf \
-    discord darkaudacity-git realvnc-vnc-server realvnc-vnc-viewer grub-customizer \
+    discord realvnc-vnc-server realvnc-vnc-viewer \
     ovmf-git virtio-win dmidecode-git looking-glass-git scream-pulse \
     g810-led-git \
     reflector-timer
 
 # Setup extra local & shared drives
-cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated or placed at /root/.cryptkey
+cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated or placed at /root/.cryptkey for this cryottab to work
 
-mkdir /mnt/{Backup,Downloads,FTP,Games,Media,Vault,VMs,Store}
-chmod 0777 /mnt/{Backup,Downloads,FTP,Media,Vault,Store}
-chown root:users /mnt/{Backup,Downloads,FTP,Media,Store}
+mkdir /mnt/{Backup,Downloads,Games,Media,Vault,VMs}
+chmod 0777 /mnt/{Backup,Downloads,Media,Vault}
+chown root:users /mnt/{Backup,Downloads,Media}
 
 cat ./Configs/fstab >> /etc/fstab
 cat ./Configs/shareddrives.service /etc/systemd/system/shareddrives.service
-chmod +x /usr/local/bin/shareddrives.sh
-
-echo "username=$shareduser" >/root/.sharedcredentials
-echo "password=$sharedpass" >>/root/.sharedcredentials
 
 # Stop screen tearing
 cat ./Configs/20-intel.conf >/etc/X11/xorg.conf.d/20-intel.conf
@@ -87,32 +84,25 @@ brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip=192.168.0.120
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
-# Optimise AUR compiles
-sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" /etc/makepkg.conf
-sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" /etc/makepkg.conf
-
 # Configure QEMU and libvirt
 cat ./Configs/qemu.conf >/etc/libvirt/qemu.conf
 sed -i -e "s/\$user/""$user""/g" /etc/libvirt/qemu.conf
 cat ./Configs/libvirtd.conf >/etc/libvirt/libvirtd.conf
-sed -i -e "s/\$user/""$user""/g" /etc/libvirt/libvirtd.conf
-
 usermod -a -G libvirt $user
 
 # Create service for Looking Glass
 cat ./Configs/looking-glass-init.sh >/usr/local/bin/looking-glass-init.sh
 sed -i -e "s/\$user/""$user""/g" /usr/local/bin/looking-glass-init.sh
-chmod +x /usr/local/bin/looking-glass-init.sh
 cat ./Configs/looking-glass-init.service >/etc/systemd/system/looking-glass-init.service
 
 # Create SSL keys for Spice
 mkdir /etc/pki
 mkdir /etc/pki/qemu
-cd /etc/pki/qemu
+cd /etc/pki/qemu || return
 openssl genrsa -des3 -out ca-key.pem 1024
 openssl req -new -x509 -days 750 -key ca-key.pem -out ca-cert.pem -utf8 -subj "/CN=Self Signed"
 openssl genrsa -out server-key.pem 1024
-openssl req -new -key server-key.pem -out server-key.csr -utf8 -subj "/CN=colin"
+openssl req -new -key server-key.pem -out server-key.csr -utf8 -subj "/CN=$user"
 openssl x509 -req -days 750 -in server-key.csr -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.pem
 openssl rsa -in server-key.pem -out server-key.pem.insecure
 mv server-key.pem server-key.pem.secure
@@ -121,33 +111,42 @@ sudo chown root:kvm ./*
 sudo chmod 0440 ./*
 
 # Configure Network Manager
-cat ./Configs/network-bridge-master >/etc/NetworkManager/system-connections/Bridge\ $hostname
-sed -i -e "s/\$hostname/""$hostname""/g" /etc/NetworkManager/system-connections/Bridge\ $hostname
-sed -i -e "s/\$domain/""$domain""/g" 
+cat ./Configs/bridge-master.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
+sed -i -e "\
+    s/\$hostname/""$hostname""/g; \
+    s/\$domain/""$domain""/g; \
+    s/\$ipaddress/""$ipaddress""/g; \
+    s/\$dns/""$dns""/g; \
+    s/\$gateway/""$gateway""/g" \
+/etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
 
-cat ./Configs/network-bridge-slave >/etc/NetworkManager/system-connections/Bridge\ Slave\ $hostname
+cat ./Configs/bridge-slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 enet=$(ls /sys/class/net/ | grep "^en")
-sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave\ $hostname
+sed -i -e "\
+    s/\$hostname/""$hostname""/g \
+    s/\$enet/""$enet""/g" \
+/etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 
-cat ./Configs/vpn >/etc/NetworkManager/system-connections/IVPN\ United\ Kingdom
-sed -i -e "s/\$user/""$user""/g" /etc/NetworkManager/system-connections/IVPN\ United\ Kingdom
-sed -i -e "s/\$vpnpassword/""$vpnpassword""/g" /etc/NetworkManager/system-connections/IVPN\ United\ Kingdom
-
-# Configure dnsmasq
+# Configure dnsmasq & enable for Network Manager
 cat ./Configs/dnsmasq.conf >/etc/dnsmasq.conf
-sed -i -e "s/\$ipaddress/""$ipaddress""/g"
-
-# Enable dnsmasq for Network Manager
-echo "dns=dnsmasq" /etc/NetworkManager/NetworkManager.conf
+sed -i -e "s/\$ipaddress/""$ipaddress""/g" /etc/dnsmasq.conf
+IFS=\;
+for server in $dns; do
+    echo server=$server >> /etc/dnsmasq.conf
+done
+echo -e "[main]\ndns=dnsmasq" >/etc/NetworkManager/NetworkManager.conf
 
 # Configure SSH
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
-sed -i -e "s/\$sshusers/""$sshusers""/g"
+sed -i -e "s/\$sshusers/""$sshusers""/g" /etc/ssh/sshd_config
 
 # Libvirt hook to call cpupower and set governor to performance
 mkdir /etc/libvirt/hooks
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
 chmod +x /etc/libvirt/hooks/qemu
+
+# Add domain to idmapd.conf
+sed -i -e "s/Domain\ =/Domain\ =\ ""$domain""/g" /etc/idmapd.conf
 
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
@@ -161,25 +160,41 @@ vncinitconfig -service-daemon
 
 # Set locale
 localectl set-keymap uk
-localectl set-x11-keymap uk
+# localectl set-x11-keymap uk -- currently not working
 localectl set-locale LANG="en_GB.UTF-8"
 
 # Set time synchronisation
 timedatectl set-ntp true
 
+# Enable attached pi_shutdown when machine shuts down
+cat ./Configs/pi_shutdown.sh >/usr/local/bin/pi_shutdown.sh
+cat ./Configs/pi_shutdown.service >/etc/systemd/system/pi_shutdown.service
+
+# Enable rsync backup
+cat ./Configs/rsync.sh >/usr/local/bin/rsync.sh
+sed -i -e "s/\$hostname/""$hostname""/g" /usr/local/bin/rsync.sh
+cat ./Configs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
+cat ./Configs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
+
+# Everything in /usr/local/bin is executable
+chmod +x -R /usr/local/bin/*
+
 # Enable ALL the services
 systemctl enable    avahi-daemon \
+                    dnsmasq \
                     haveged \
                     libvirtd \
                     lightdm \
                     looking-glass-init \
                     NetworkManager \
                     org.cups.cupsd \
+                    pi_shutdown \
                     reflector.timer \
+                    rsync_backup.timer \
                     shareddrives \
                     vncserver-x11-serviced
 
 # Disable initial networking and reboot
-netctl disable enet-dhcp
+netctl disable ethernet-dhcp
 systemctl disable netctl
 reboot
