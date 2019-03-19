@@ -1,1 +1,2 @@
-VMs 	UUID=653e6bbe-309f-446b-a0b3-fd5737feea54				/root/.cryptkey 	discard
+#<name>   <device>                                   <password>        <options>
+VMs       UUID=653e6bbe-309f-446b-a0b3-fd5737feea54  /root/.cryptkey  discard
