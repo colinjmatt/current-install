@@ -13,17 +13,17 @@ grep --no-group-separator -A1 "United Kingdom" /etc/pacman.d/mirrorlist > /mirro
 cat /mirrorlist > /etc/pacman.d/mirrorlist
 
 # Create partitions, create and open encrypted volume and mount all partitions
-parted -s /dev/nvme0n1 mklabel gpt
-parted -s /dev/nvme0n1 mkpart ESP fat32 2048s 512MiB
-parted -s /dev/nvme0n1 set 1 boot on
-parted -s /dev/nvme0n1 mkpart primary ext4 512MiB 100%
+parted -s /dev/nvme1n1 mklabel gpt
+parted -s /dev/nvme1n1 mkpart ESP fat32 2048s 512MiB
+parted -s /dev/nvme1n1 set 1 boot on
+parted -s /dev/nvme1n1 mkpart primary ext4 512MiB 100%
 mkfs.vfat -F32 /dev/nvme0n1p1
 
-cryptsetup luksFormat /dev/nvme0n1p2
-cryptsetup luksOpen /dev/nvme0n1p2 crypt
+cryptsetup luksFormat /dev/nvme1n1p2
+cryptsetup luksOpen /dev/nvme1n1p2 nvme1n1p2-crypt
 
-pvcreate /dev/mapper/crypt
-vgcreate vg0 /dev/mapper/crypt
+pvcreate /dev/mapper/nvme1n1p2-crypt
+vgcreate vg0 /dev/mapper/nvme1n1p2-crypt
 lvcreate -L 32G vg0 -n swap
 lvcreate -l 100%FREE vg0 -n root
 mkswap /dev/mapper/vg0-swap
@@ -31,11 +31,11 @@ mkfs.ext4 /dev/mapper/vg0-root
 
 mount /dev/mapper/vg0-root /mnt
 mkdir /mnt/boot
-mount /dev/nvme0n1p1 /mnt/boot
+mount /dev/nvme1n1p1 /mnt/boot
 swapon /dev/mapper/vg0-swap
 
 # Install base system
-pacstrap /mnt base base-devel intel-ucode wget git
+pacstrap /mnt base base-devel intel-ucode openssh wget git
 
 # Copy mirrorlist to installed base system
 cp /mirrorlist /mnt/etc/pacman.d/
@@ -58,7 +58,7 @@ echo "KEYMAP=uk" > /etc/vconsole.conf
 
 # Create dhcp ethernet connection
 cat ./Configs/ethernet-dhcp >/etc/netctl/ethernet-dhcp
-sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g"
+sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/netctl/ethernet-dhcp
 
 # Set hostname
 hostname $hostname
@@ -78,9 +78,10 @@ cat ./Configs/user_nanorc >/etc/skel/.nanorc
 cat ./Configs/nanorc > /etc/nanorc
 
 # Set root password, create user, add to sudoers (enable pacaman and virsh sudo without pass) and set password
-passwd
+passwd root
 groupadd -r autologin
-useradd -m -g users -G users,wheel,storage,power,audio,autologin $user
+groupadd $user
+useradd -m -g $user -G users,wheel,storage,power,audio,autologin $user
 passwd $user
 gpasswd -a $user autologin
 echo "$user ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virsh, NOPASSWD: /usr/bin/shutdown, NOPASSWD: /usr/bin/reboot" > /etc/sudoers.d/$user
@@ -96,7 +97,8 @@ bootctl install
 mkdir -p /etc/pacman.d/hooks
 cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
-cat ./Configs/pre-crypt-key-arch.conf /boot/loader/entries/arch.conf
+cat ./Configs/arch.conf /boot/loader/entries/arch.conf
+cat ./Configs/arch-rt-bfq.conf /boot/loader/entries/arch-rt-bfq.conf
 
 LUKSENCRYPTUUID=$(blkid | grep crypto_LUKS | awk -F '"' '{print $2}')
 sed -i -e "s/\$LUKSENCRYPTUUID/""$LUKSENCRYPTUUID""/g"
@@ -108,7 +110,7 @@ echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
 
 # Setup fsck after kernel load due to being removed for quiet boot
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
-cat ./Configs/systemd-fsck.service >/etc/systemd/system/systemd-fsck.service
+cat ./Configs/systemd-fsck\@.service >/etc/systemd/system/systemd-fsck\@.service
 
 # Enable and start networking to download more packages
 systemctl enable netctl
