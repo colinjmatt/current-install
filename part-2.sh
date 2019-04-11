@@ -1,5 +1,9 @@
 #!/bin/bash
 # Set region and locale
+hostname=""
+user=""
+sshusers=""
+
 rm /etc/localtime
 ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
 echo "en_GB.UTF-8 UTF-8" > /etc/locale.gen
@@ -49,11 +53,11 @@ bootctl install
 mkdir -p /etc/pacman.d/hooks
 cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
-cat ./Configs/arch.conf /boot/loader/entries/arch.conf
+cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
 cat ./Configs/arch-rt-bfq.conf /boot/loader/entries/arch-rt-bfq.conf
 
-LUKSENCRYPTUUID=$(blkid | grep crypto_LUKS | awk -F '"' '{print $2}')
-sed -i -e "s/\$LUKSENCRYPTUUID/""$LUKSENCRYPTUUID""/g"
+luksencryptuuid=$(blkid | grep crypto_LUKS | awk -F '"' '{print $2}')
+sed -i -e "s/\$luksencryptuuid/""$luksencryptuuid""/g" /boot/loader/entries/arch*.conf
 
 # Config for vfio reservation, blacklist nVidia driver and quiet kernel
 echo "options vfio-pci ids=10de:1b06,10de:10ef" > /etc/modprobe.d/vfio.conf
@@ -64,9 +68,16 @@ echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
 cat ./Configs/systemd-fsck\@.service >/etc/systemd/system/systemd-fsck\@.service
 
+# Configure SSH
+cat ./Configs/sshd_config >/etc/ssh/sshd_config
+sed -i -e "s/\$sshusers/""$sshusers""/g" /etc/ssh/sshd_config
+
 # Enable and start networking to download more packages
 systemctl enable netctl
 netctl enable ethernet-dhcp
+
+# Enable ssh to assist with rest of setup
+systemctl enable sshd
 
 # Exit chroot
 exit
