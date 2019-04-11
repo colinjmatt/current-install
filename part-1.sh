@@ -1,8 +1,6 @@
 #!/bin/bash
 # BACKUP /home/user/    BEFORE REINSTALLING!!
 # BACKUP /etc/libvirt/  BEFORE REINSTALLING!!
-hostname=""
-user=""
 
 # Set time & keyboard map
 timedatectl set-ntp true
