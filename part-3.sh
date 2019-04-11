@@ -8,9 +8,6 @@ gateway="" # single
 vnclicense="" # single
 sshusers="" # multiple
 
-# Enable ssh to assist with rest of setup
-systemctl enable sshd --now
-
 # All currently required software in official repos
 pacman -S \
     xorg-server xf86-video-intel xorg-xrandr xorg-xinput xdg-utils xterm \
@@ -19,7 +16,7 @@ pacman -S \
     xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
     accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
     alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs audacity \
-    nfs-utils exfat-utils ntfs-3g gvfs gvfs-smb sshfs dosfstools parted gnome-disk-utility \
+    nfs-utils exfat-utils ntfs-3g gvfs sshfs dosfstools parted gnome-disk-utility \
     p7zip zip unzip unrar file-roller \
     elementary-icon-theme arc-icon-theme \
     noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
@@ -135,10 +132,6 @@ for server in $dns; do
     echo server=$server >> /etc/dnsmasq.conf
 done
 echo -e "[main]\ndns=dnsmasq" >/etc/NetworkManager/NetworkManager.conf
-
-# Configure SSH
-cat ./Configs/sshd_config >/etc/ssh/sshd_config
-sed -i -e "s/\$sshusers/""$sshusers""/g" /etc/ssh/sshd_config
 
 # Libvirt hook to call cpupower and set governor to performance
 mkdir /etc/libvirt/hooks
