@@ -151,14 +151,6 @@ cat ./Configs/g810-led-profile >/etc/g810-led/profile
 vnclicense -add $vnclicense
 vncinitconfig -service-daemon
 
-# Set locale
-localectl set-keymap uk
-localectl set-x11-keymap gb
-localectl set-locale LANG="en_GB.UTF-8"
-
-# Set time synchronisation
-timedatectl set-ntp true
-
 # Enable attached pi_shutdown when machine shuts down
 cat ./Configs/pi_shutdown.sh >/usr/local/bin/pi_shutdown.sh
 cat ./Configs/pi_shutdown.service >/etc/systemd/system/pi_shutdown.service

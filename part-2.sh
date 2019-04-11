@@ -1,9 +1,9 @@
 #!/bin/bash
-# Set region and locale
 hostname=""
 user=""
 sshusers=""
 
+# Set region and locale
 rm /etc/localtime
 ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
 echo "en_GB.UTF-8 UTF-8" > /etc/locale.gen
@@ -27,10 +27,8 @@ cat ./Configs/pacman.conf >/etc/pacman.conf
 # Set .bashrc  and .nanorc for users & root
 cat ./Configs/root_bashrc >/root/.bashrc
 cat ./Configs/user_bashrc >/etc/skel/.bashrc
-
 cat ./Configs/root_nanorc >/root/.nanorc
 cat ./Configs/user_nanorc >/etc/skel/.nanorc
-
 cat ./Configs/nanorc > /etc/nanorc
 
 # Set root password, create user, add to sudoers (enable pacaman and virsh sudo without pass) and set password
@@ -71,6 +69,14 @@ cat ./Configs/systemd-fsck\@.service >/etc/systemd/system/systemd-fsck\@.service
 # Configure SSH
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
 sed -i -e "s/\$sshusers/""$sshusers""/g" /etc/ssh/sshd_config
+
+# Set locale
+localectl set-keymap uk
+localectl set-x11-keymap gb
+localectl set-locale LANG="en_GB.UTF-8"
+
+# Set time synchronisation
+timedatectl set-ntp true
 
 # Enable and start networking to download more packages
 systemctl enable netctl
