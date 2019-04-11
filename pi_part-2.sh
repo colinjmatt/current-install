@@ -98,7 +98,8 @@ cat ./PiConfigs/pHAT_functions.service >/etc/systemd/system/pHAT_functions.servi
 cat ./PiConfigs/pHAT_functions.py >/usr/local/bin/pHAT_functions.py
 
 # Create backup service
-cat ./PiConfigs/rsync.sh >/usr/local/bin/rsync.sh
+cat ./PiConfigs/backup.sh >/usr/local/bin/backup.sh
+sed -i -e "s/\$backupuser/""$backupuser""/g" /usr/local/bin/backup.sh
 cat ./PiConfigs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
 cat ./PiConfigs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
 

@@ -7,6 +7,7 @@ dns="" # semi colon separated multiples
 gateway="" # single
 vnclicense="" # single
 sshusers="" # multiple
+backupuser=""
 
 # All currently required software in official repos
 pacman -S \
@@ -156,8 +157,8 @@ cat ./Configs/pi_shutdown.sh >/usr/local/bin/pi_shutdown.sh
 cat ./Configs/pi_shutdown.service >/etc/systemd/system/pi_shutdown.service
 
 # Enable rsync backup
-cat ./Configs/rsync.sh >/usr/local/bin/rsync.sh
-sed -i -e "s/\$hostname/""$hostname""/g" /usr/local/bin/rsync.sh
+cat ./Configs/backup.sh >/usr/local/bin/backup.sh
+sed -i -e "s/\$backupuser/""$backupuser""/g" /usr/local/bin/backup.sh
 cat ./Configs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
 cat ./Configs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
 
