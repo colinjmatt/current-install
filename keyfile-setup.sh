@@ -23,7 +23,7 @@ sudo pacman -S --noconfirm dosfstools parted
 sudo mkdir -p /mnt/usbkey
 sudo parted -s /dev/"$KEYDRIVE" mklabel gpt
 sudo parted -s /dev/"$KEYDRIVE" mkpart FAT32
-sudo mkfs.vfat /dev/"$KEYDRIVE"
+sudo mkfs.vfat -I /dev/"$KEYDRIVE"
 sudo mount /dev/"$KEYDRIVE" /mnt/usbkey
 
 KEYDRIVEUUID=$(blkid /dev/""$KEYDRIVE"" -o value | sed -n "/msdos/{n;p}")
@@ -38,7 +38,7 @@ sudo cryptsetup luksAddKey /dev/"$ENCRYPTEDDRIVE" /mnt/usbkey/crypt.key --key-sl
 sudo sed -i -e "s/MODULES=\"/MODULES=\"nls_cp437 vfat\ /g" /etc/mkinitcpio.conf
 mkinitcpio -p linux linux-rt-bfq
 
-sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$KEYDRIVEUUID"":vfat:/crypt.key\ /g" /boot/loader/entries/arch.conf
+sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$KEYDRIVEUUID"":vfat:\/crypt.key\ /g" /boot/loader/entries/arch.conf
 
 sudo umount /mnt/usbkey
 sudo rm -rf /mnt/usbkey
