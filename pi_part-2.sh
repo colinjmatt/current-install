@@ -57,7 +57,7 @@ cd /tmp/yay || return
 makepkg -si
 
 # Install packages
-pacman -S sudo dnsutils rsync python-pip gcc git make m4 fakeroot i2c-tools lm_sensors nfs-utils cifs-utils
+pacman -S base-devel sudo dnsutils rsync python-pip git i2c-tools lm_sensors nfs-utils
 yay -S pi-bluetooth python-raspberry-gpio raspi-config
 pip install touchphat
 
