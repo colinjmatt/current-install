@@ -70,9 +70,6 @@ cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
 cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
 cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
 
-# Set country for reflector
-echo "COUNTRY=UK" > /etc/conf.d/reflector.conf
-
 # Setup scanner
 echo "192.168.0.120" >> /etc/sane.d/net.conf
 brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip=192.168.0.120
