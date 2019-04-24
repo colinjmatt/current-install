@@ -11,7 +11,7 @@ backupuser=""
 
 # All currently required software in official repos
 pacman -S \
-    xorg-server xf86-video-intel xorg-xrandr xorg-xinput xdg-utils xterm \
+    xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
     dnsmasq firewalld ebtables dnsutils bridge-utils \
     networkmanager networkmanager-openvpn network-manager-applet \
     xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
@@ -24,7 +24,7 @@ pacman -S \
     cups cups-pdf sane djvulibre tesseract tesseract-data-eng \
     firefox epdfview libreoffice-fresh bleachbit \
     qemu libvirt libgsf virt-manager \
-    vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
+    xf86-video-intel vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
     rsync ccache speedtest-cli \
     os-prober reflector cpupower haveged
 
