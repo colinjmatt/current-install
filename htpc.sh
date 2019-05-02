@@ -1,7 +1,7 @@
 #!/bin/bash
-htpcuser="" # Name of main user
+htpcuser="user2" # Name of main user
 vnclicense="" # License key for VNC
-yayuser="" # Name of user that yay (AUR) will be used for
+yayuser="user1" # Name of user that yay (AUR) will be used for
 
 pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           networkmanager network-manager-applet \
@@ -35,10 +35,7 @@ echo "local-shared-01:/NFS/Shared /mnt/Shared nfs vers=4,x-systemd.automount,x-s
 su -P $htpcuser -c 'mkdir -p /home/htpc/.config/aacs; \
                     wget https://vlc-bluray.whoknowsmy.name/files/KEYDB.cfg -O /home/htpc/.config/aacs/KEYDB.cfg; \
                     flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; \
-                    flatpak --user install flathub com.valvesoftware.Steam
-                    mkdir -p /home/$htpcuser/.local/share/totem/plugins; \
-                    cd /home/$htpcuser/.local/share/totem/plugins || return; \
-                    git clone https://github.com/phuang/totem-plugin-airplay'
+                    flatpak --user install flathub com.valvesoftware.Steam'
 
 sed -i -e "s/load-module\ module-suspend-on-idle/#load-module module-suspend-on-idle/g" /etc/pulse/default.pa
 
@@ -47,3 +44,4 @@ cat ./HTPCConfigs20-amdgpu.conf >/etc/X11/xorg.conf.d/20-amdgpu.conf
 netctl disable ethernet-static
 systemctl disable netctl
 systemctl enable lightdm NetworkManager vncserver-x11-serviced bluetooth avahi-daemon
+reboot
