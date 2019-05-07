@@ -13,7 +13,7 @@ pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           gvfs \
           p7zip zip unzip unrar file-roller \
           bluez bluez-utils blueman \
-          firefox vlc libaacs libdvdcss retroarch retroarch-assets-xmb flatpak
+          firefox vlc libaacs libdvdcss retroarch retroarch-assets-xmb retroarch-assets-ozone flatpak
 
 pacman -S xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
 
