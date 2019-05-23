@@ -54,7 +54,7 @@ yay -S \
 # Setup extra local & shared drives
 cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated and placed at /root/.cryptkey for this crypttab to work
 
-mkdir /mnt/{Games,Shared,VMs}
+mkdir /mnt/{Shared,VMs}
 
 cat ./Configs/fstab >> /etc/fstab
 cat ./Configs/nfsd.conf >/etc/modprobe.d/nfsd.conf
