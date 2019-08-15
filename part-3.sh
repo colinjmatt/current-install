@@ -19,7 +19,7 @@ pacman -S \
     alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs audacity \
     nfs-utils exfat-utils ntfs-3g gvfs sshfs dosfstools parted gnome-disk-utility \
     p7zip zip unzip unrar file-roller \
-    elementary-icon-theme arc-icon-theme \
+    elementary-icon-theme \
     noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
     cups cups-pdf sane djvulibre tesseract tesseract-data-eng \
     firefox epdfview libreoffice-fresh bleachbit \
@@ -43,7 +43,7 @@ yay -S \
     linux-rt-bfq \
     xfce4-volumed-pulse mugshot \
     p7zip-gui neofetch \
-    faba-icon-theme moka-icon-theme \
+    arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
     ttf-ms-fonts \
     brother-dcp-9020cdw brscan4 gscan2pdf \
     discord realvnc-vnc-server realvnc-vnc-viewer \
@@ -58,9 +58,6 @@ mkdir /mnt/{Shared,VMs}
 
 cat ./Configs/fstab >> /etc/fstab
 cat ./Configs/nfsd.conf >/etc/modprobe.d/nfsd.conf
-
-# Stop screen tearing
-cat ./Configs/20-intel.conf >/etc/X11/xorg.conf.d/20-intel.conf
 
 # Configure reflector
 mkdir /etc/pacman.d/hooks
