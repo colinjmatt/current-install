@@ -9,7 +9,7 @@ pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
           accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
           alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs \
-          elementary-icon-theme arc-icon-theme \
+          elementary-icon-theme \
           gvfs \
           p7zip zip unzip unrar file-roller \
           bluez bluez-utils blueman \
@@ -20,7 +20,7 @@ pacman -S xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
 (cd /tmp || return
 su $yayuser -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
-su $yayuser -P -c 'makepkg -si; yay -S realvnc-vnc-server p7zip-gui reflector-timer barrier aacskeys')
+su $yayuser -P -c 'makepkg -si; yay -S realvnc-vnc-server p7zip-gui reflector-timer barrier aacskeys arc-icon-theme-git moka-icon-theme-git faba-icon-theme-git')
 
 vnclicense -add $vnclicense
 vncinitconfig -service-daemon
