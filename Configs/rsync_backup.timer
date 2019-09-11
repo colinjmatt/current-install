@@ -5,7 +5,6 @@ Description=Weekly rsync backup
 OnCalendar=weekly
 Persistent=true
 AccuracySec=1us
-OnStartupSec=60
 RandomizedDelaySec=12h
 
 [Install]
