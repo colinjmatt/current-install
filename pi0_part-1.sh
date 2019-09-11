@@ -34,7 +34,7 @@ IP=static
 Address='192.168.0.110/24'
 Gateway='192.168.0.1'
 DNS=('192.168.0.81' '1.1.1.1' '1.0.0.1')
-Key=Ax1YbiL27c1PM8j
+Key=
 
 
 sync
