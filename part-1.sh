@@ -33,7 +33,7 @@ mount /dev/nvme1n1p1 /mnt/boot
 swapon /dev/mapper/vg0-swap
 
 # Install base system
-pacstrap /mnt base base-devel intel-ucode openssh wget git
+pacstrap /mnt base base-devel intel-ucode linux openssh wget nano git
 
 # Copy mirrorlist to installed base system
 cp /mirrorlist /mnt/etc/pacman.d/
