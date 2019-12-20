@@ -1,13 +1,13 @@
 #!/bin/bash
-user="colin" # single
-hostname="colin-pc" # single
-domain="matthews.local" # single
-ipaddress="192.168.0.101" # single
-dns="192.168.0.1" # semi colon separated multiples
-gateway="192.168.0.1" # single
-vnclicense="SEHDH-YFQTN-YQFNQ-RWUSR-L56ZA" # single
-sshusers="colin" # multiple
-backupuser="u187516"
+user="" # single
+hostname="" # single
+domain="" # single
+ipaddress="" # single
+dns="" # semi colon separated multiples
+gateway="" # single
+vnclicense="" # single
+sshusers="" # multiple
+backupuser=""
 
 echo "nameserver $dns" >> /etc/resolv.conf
 localectl set-x11-keymap gb
