@@ -1,4 +1,0 @@
-Description='Ethernet'
-Interface=$interface
-Connection=ethernet
-IP=dhcp

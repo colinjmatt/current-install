@@ -11,13 +11,15 @@ locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 export LANG=en_GB.UTF-8
 echo "KEYMAP=uk" > /etc/vconsole.conf
+localectl set-keymap uk
+localectl set-locale LANG="en_GB.UTF-8"
 
 # Create dhcp ethernet connection
-cat ./Configs/ethernet-dhcp >/etc/netctl/ethernet-dhcp
-sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/netctl/ethernet-dhcp
+cat ./Configs/20-ethernet-dhcp.network >/etc/systemd/network/20-ethernet-dhcp.network
+sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/systemd/network/20-ethernet-dhcp.network
 
 # Set hostname
-hostname $hostname
+hostnamectl set-hostname $hostname
 echo "$hostname" > /etc/hostname
 echo "127.0.0.1 localhost.localdomain localhost $hostname" > /etc/hosts
 
@@ -52,7 +54,7 @@ mkdir -p /etc/pacman.d/hooks
 cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
-cat ./Configs/arch-rt-bfq.conf /boot/loader/entries/arch-rt-bfq.conf
+cat ./Configs/arch-rt-bfq.conf >/boot/loader/entries/arch-rt-bfq.conf
 
 luksencryptuuid=$(blkid | grep crypto_LUKS | awk -F '"' '{print $2}')
 sed -i -e "s/\$luksencryptuuid/""$luksencryptuuid""/g" /boot/loader/entries/arch*.conf
@@ -70,20 +72,14 @@ cat ./Configs/systemd-fsck\@.service >/etc/systemd/system/systemd-fsck\@.service
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
 sed -i -e "s/\$sshusers/""$sshusers""/g" /etc/ssh/sshd_config
 
-# Set locale
-localectl set-keymap uk
-localectl set-x11-keymap gb
-localectl set-locale LANG="en_GB.UTF-8"
+# Fix system freezes when copying lots of/huge files
+cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
 
 # Set time synchronisation
 timedatectl set-ntp true
 
-# Enable and start networking to download more packages
-systemctl enable netctl
-netctl enable ethernet-dhcp
-
-# Enable ssh to assist with rest of setup
-systemctl enable sshd
+# Enable and start networking to download more packages and ssh to assist with tghe rest of the setup
+systemctl enable systemd-networkd systemd-resolved sshd
 
 # Exit chroot
 exit

@@ -1,13 +1,16 @@
 #!/bin/bash
-user="" # single
-hostname="" # single
-domain="" # single
-ipaddress="" # single
-dns="" # semi colon separated multiples
-gateway="" # single
-vnclicense="" # single
-sshusers="" # multiple
-backupuser=""
+user="colin" # single
+hostname="colin-pc" # single
+domain="matthews.local" # single
+ipaddress="192.168.0.101" # single
+dns="192.168.0.1" # semi colon separated multiples
+gateway="192.168.0.1" # single
+vnclicense="SEHDH-YFQTN-YQFNQ-RWUSR-L56ZA" # single
+sshusers="colin" # multiple
+backupuser="u187516"
+
+echo "nameserver $dns" >> /etc/resolv.conf
+localectl set-x11-keymap gb
 
 # All currently required software in official repos
 pacman -S \
@@ -21,51 +24,44 @@ pacman -S \
     p7zip zip unzip unrar file-roller \
     elementary-icon-theme \
     noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
-    cups cups-pdf sane djvulibre tesseract tesseract-data-eng \
-    firefox epdfview libreoffice-fresh bleachbit \
+    cups cups-pdf sane gscan2pdf djvulibre tesseract tesseract-data-eng \
+    firefox epdfview libreoffice-fresh discord bleachbit \
     qemu libvirt libgsf virt-manager \
     xf86-video-intel vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
     rsync ccache speedtest-cli \
-    os-prober reflector cpupower haveged
+    polkit reflector cpupower haveged neofetch
 
-# Install yay (as a non-priviledged user)
-cd /tmp || return
-git clone https://aur.archlinux.org/yay.git
-cd /tmp/yay || return
-makepkg -si
+# Configure reflector
+echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
+cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
 
 # Optimise AUR compiles
 sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" /etc/makepkg.conf
 sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" /etc/makepkg.conf
 
+# Install yay (as a non-priviledged user)
+( cd /tmp || return
+git clone https://aur.archlinux.org/yay.git
+cd /tmp/yay || return
+makepkg -si )
+
 # All currently required software in AUR
 yay -S \
     linux-rt-bfq \
     xfce4-volumed-pulse mugshot \
-    p7zip-gui neofetch \
+    p7zip-gui \
     arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
     ttf-ms-fonts \
-    brother-dcp-9020cdw brscan4 gscan2pdf \
-    discord realvnc-vnc-server realvnc-vnc-viewer \
-    ovmf-git virtio-win dmidecode-git looking-glass-git scream-pulse \
-    g810-led-git \
-    reflector-timer
+    brother-dcp-9020cdw brscan4 \
+    realvnc-vnc-server realvnc-vnc-viewer \
+    ovmf-git virtio-win dmidecode-git scream-pulse \
+    g810-led-git
 
 # Setup extra local & shared drives
 cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated and placed at /root/.cryptkey for this crypttab to work
-
-mkdir /mnt/{Shared,VMs}
-
 cat ./Configs/fstab >> /etc/fstab
-cat ./Configs/nfsd.conf >/etc/modprobe.d/nfsd.conf
 
-# Configure reflector
-mkdir /etc/pacman.d/hooks
-cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
-
-# Create Reflector service that runs every startup
-cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
-cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
+mkdir /mnt/{offsite-hetzner,VMs}
 
 # Setup scanner
 echo "192.168.0.120" >> /etc/sane.d/net.conf
@@ -80,13 +76,8 @@ sed -i -e "s/\$user/""$user""/g" /etc/libvirt/qemu.conf
 cat ./Configs/libvirtd.conf >/etc/libvirt/libvirtd.conf
 usermod -a -G libvirt $user
 
-# Create service for Looking Glass
-cat ./Configs/looking-glass-init.sh >/usr/local/bin/looking-glass-init.sh
-sed -i -e "s/\$user/""$user""/g" /usr/local/bin/looking-glass-init.sh
-cat ./Configs/looking-glass-init.service >/etc/systemd/system/looking-glass-init.service
-
 # Create SSL keys for Spice
-mkdir /etc/pki
+( mkdir /etc/pki
 mkdir /etc/pki/qemu
 cd /etc/pki/qemu || return
 openssl genrsa -des3 -out ca-key.pem 1024
@@ -98,7 +89,7 @@ openssl rsa -in server-key.pem -out server-key.pem.insecure
 mv server-key.pem server-key.pem.secure
 mv server-key.pem.insecure server-key.pem
 sudo chown root:kvm ./*
-sudo chmod 0440 ./*
+sudo chmod 0440 ./* )
 
 # Configure Network Manager
 cat ./Configs/bridge-master.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
@@ -113,7 +104,7 @@ sed -i -e "\
 cat ./Configs/bridge-slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 enet=$(ls /sys/class/net/ | grep "^en")
 sed -i -e "\
-    s/\$hostname/""$hostname""/g \
+    s/\$hostname/""$hostname""/g; \
     s/\$enet/""$enet""/g" \
 /etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 
@@ -131,22 +122,12 @@ mkdir /etc/libvirt/hooks
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
 chmod +x /etc/libvirt/hooks/qemu
 
-# Add domain to idmapd.conf
-sed -i -e "s/#Domain\ =/Domain\ =\ ""$domain""/g" /etc/idmapd.conf
-
-# Fix system freezes when copying lots of/huge files
-cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
-
 # G810 Keyboard LED theme
 cat ./Configs/g810-led-profile >/etc/g810-led/profile
 
 # Install VNC
 vnclicense -add $vnclicense
 vncinitconfig -service-daemon
-
-# Enable attached pi_shutdown when machine shuts down
-cat ./Configs/pi_shutdown.sh >/usr/local/bin/pi_shutdown.sh
-cat ./Configs/pi_shutdown.service >/etc/systemd/system/pi_shutdown.service
 
 # Enable rsync backup
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
@@ -163,16 +144,12 @@ systemctl enable    avahi-daemon \
                     haveged \
                     libvirtd \
                     lightdm \
-                    looking-glass-init \
                     NetworkManager \
                     org.cups.cupsd \
-                    pi_shutdown \
-                    reflector.timer \
                     rsync_backup.timer \
-                    shareddrives \
                     vncserver-x11-serviced
 
 # Disable initial networking and reboot
-netctl disable ethernet-dhcp
-systemctl disable netctl
+systemctl disable systemd-networkd systemd-resolved
+
 reboot
