@@ -9,6 +9,6 @@ slave-type=bridge
 
 [ethernet]
 auto-negotiate=true
-cloned-mac-address=52:54:00:6E:11:48
-mac-address=38:D5:47:13:90:01
+cloned-mac-address=
+mac-address=
 mac-address-blacklist=

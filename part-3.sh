@@ -15,7 +15,7 @@ localectl set-x11-keymap gb
 # All currently required software in official repos
 pacman -S \
     xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
-    dnsmasq firewalld ebtables dnsutils bridge-utils \
+    firewalld ebtables dnsutils bridge-utils \
     networkmanager networkmanager-openvpn network-manager-applet \
     xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
     accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
@@ -27,7 +27,7 @@ pacman -S \
     cups cups-pdf sane gscan2pdf djvulibre tesseract tesseract-data-eng \
     firefox epdfview libreoffice-fresh discord bleachbit \
     qemu libvirt libgsf virt-manager \
-    xf86-video-intel vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
+    vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
     rsync ccache speedtest-cli \
     polkit reflector cpupower haveged neofetch
 
@@ -108,15 +108,6 @@ sed -i -e "\
     s/\$enet/""$enet""/g" \
 /etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 
-# Configure dnsmasq & enable for Network Manager
-cat ./Configs/dnsmasq.conf >/etc/dnsmasq.conf
-sed -i -e "s/\$ipaddress/""$ipaddress""/g" /etc/dnsmasq.conf
-IFS=\;
-for server in $dns; do
-    echo server=$server >> /etc/dnsmasq.conf
-done
-echo -e "[main]\ndns=dnsmasq" >/etc/NetworkManager/NetworkManager.conf
-
 # Libvirt hook to call cpupower and set governor to performance
 mkdir /etc/libvirt/hooks
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
@@ -140,7 +131,6 @@ chmod +x -R /usr/local/bin/*
 
 # Enable ALL the services
 systemctl enable    avahi-daemon \
-                    dnsmasq \
                     haveged \
                     libvirtd \
                     lightdm \
