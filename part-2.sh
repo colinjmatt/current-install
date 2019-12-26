@@ -51,7 +51,7 @@ echo "blacklist nouveau" > /etc/modprobe.d/blacklist.conf
 
 # Add modules and hooks to mkinitcpio and generate
 sed -i "s/MODULES=.*/MODULES=(nls_cp437 vfat vfio_pci vfio vfio_iommu_type1 vfio_virqfd i915)/g" /etc/mkinitcpio.conf
-sed -i "s/HOOKS=.*/HOOKS=(base systemd fsck autodetect modconf block encrypt lvm2 filesystems keyboard)/g" /etc/mkinitcpio.conf
+sed -i "s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g" /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
 # Setup bootloader
