@@ -1,9 +1,9 @@
 #!/bin/bash
-user=""
-hostname=""
-domain=""
-dns=""
-fallbackdns=""
+user="user"
+hostname="hostname"
+dns="1.1.1.1"
+fallbackdns="1.0.0.1"
+backupuser="backupuser"
 
 # Create and mount swapfile
 dd if=/dev/zero of=/mnt/swapfile bs=1M count=2048
@@ -50,15 +50,15 @@ cat ./PiConfigs/pacman.conf >/etc/pacman.conf
 pacman-key --init
 pacman-key --populate archlinuxarm
 
-# Install yay
-cd /tmp || return
-git clone https://aur.archlinux.org/yay.git
+# Install yay (as a non-priviledged user)
+( cd /tmp || return
+su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
-makepkg -si
+su $user -P -c 'makepkg -si' )
 
 # Install packages
 pacman -S base-devel sudo dnsutils rsync python-pip git i2c-tools lm_sensors nfs-utils
-yay -S pi-bluetooth python-raspberry-gpio raspi-config
+su -c "yay -S pi-bluetooth python-raspberry-gpio raspi-config" "$user"
 pip install touchphat
 
 # Experimental patch for bluetooth to work with wifi
@@ -86,9 +86,6 @@ sed -i -e "s/\$user/""$user""/g"
 userdel alarm
 rm -rf /home/alarm
 
-# Set domain for ID mapping on NFS
-sed -i -e "s/#Domain\ =.*/Domain\ =\ ""$domain""/g" /etc/idmapd.conf
-
 # Set DNS servers
 cat ./PiConfigs/resolved.conf >/etc/systemd/resolved.conf
 sed -i -e "s/\$dns/""$dns""/g s/\$fallbackdns/""$fallbackdns""/g s/\$domain/""domain""/g" /etc/systemd/resolved.conf
@@ -97,26 +94,29 @@ sed -i -e "s/\$dns/""$dns""/g s/\$fallbackdns/""$fallbackdns""/g s/\$domain/""do
 cat ./PiConfigs/pHAT_functions.service >/etc/systemd/system/pHAT_functions.service
 cat ./PiConfigs/pHAT_functions.py >/usr/local/bin/pHAT_functions.py
 
-# Create backup service
-cat ./PiConfigs/backup.sh >/usr/local/bin/backup.sh
-sed -i -e "s/\$backupuser/""$backupuser""/g" /usr/local/bin/backup.sh
-cat ./PiConfigs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
-cat ./PiConfigs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
+# Enable rsync backup
+cat ./Configs/backup.sh >/usr/local/bin/backup.sh
+sed -i -e "\
+  s/\$backupuser/""$backupuser""/g; \
+  s/\$hostname/""$hostname""/g" \
+  /usr/local/bin/backup.sh
+cat ./Configs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
+cat ./Configs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
 
-# Creat eupdate service
+# Create auto update service
 cat ./PiConfigs/pacman.sh >/usr/local/bin/pacman.sh
 cat ./PiConfigs/auto_pacman.service /etc/systemd/auto_pacman.service
 cat ./PiConfigs/auto_pacman.timer /etc/systemd/auto_pacman.timer
 
 # Make all copied scripts executable
-chmod +x /usr/local/bin/*.sh
+chmod +x /usr/local/bin/*.sh /usr/local/bin/*.py
 
-# lvm2 is not used and doesn't need monitoring
+# lvm2 is not used and doesn't need to be enabled
 systemctl mask lvm2-monitor
 
-# Enable stuff
-systemctl enable    auto_pacman.timer \
-                    pHAT_functions \
-                    rsync_backup.timer
+# Enable all services
+systemctl enable auto_pacman.timer \
+                 pHAT_functions \
+                 rsync_backup.timer
 
 reboot
