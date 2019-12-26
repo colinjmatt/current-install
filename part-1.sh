@@ -35,11 +35,12 @@ swapon /dev/mapper/vg0-swap
 # Install base system
 pacstrap /mnt base base-devel intel-ucode linux linux-firmware lvm2 systemd-resolvconf openssh wget nano git
 
-# Copy mirrorlist to installed base system
-genfstab -pU /mnt >> /mnt/etc/fstab
+# Generate fstab for filesystem mounts and add /tmp as ram drive
+genfstab -pU /mnt >>/mnt/etc/fstab
+echo "tmpfs	/tmp	tmpfs	defaults,noatime,mode=1777	0	0" >>/mnt/etc/fstab
 
-# Set /tmp as temp drive
-echo "tmpfs	/tmp	tmpfs	defaults,noatime,mode=1777	0	0" >> /mnt/etc/fstab
+# Copy mirrorlist to installed base system
+cat /mirrorlist >/mnt/etc/pacman.d/mirrorlist
 
 # Chroot in
 arch-chroot /mnt
