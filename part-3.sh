@@ -55,7 +55,7 @@ su $user -P -c 'makepkg -si' )
   brother-dcp-9020cdw brscan4 \
   realvnc-vnc-server realvnc-vnc-viewer \
   ovmf-git virtio-win dmidecode-git scream-pulse \
-  g810-led-git' )
+  g810-led-git krakenx' )
 
 # Change to RT-BFQ kernel on boot
 sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
@@ -116,8 +116,9 @@ sed -i -e "\
   s/\$enet/""$enet""/g" \
 /etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
 
-# G810 Keyboard LED theme
+# G810 Keyboard and Kraken profiles
 cat ./Configs/g810-led-profile >/etc/g810-led/profile
+cat ./Configs/krakenx-config.service >/etc/krakenx-config.service
 
 # Enable VNC
 vnclicense -add "$vnclicense"
@@ -142,6 +143,7 @@ systemctl disable systemd-networkd \
 # Enable ALL the services
 systemctl enable avahi-daemon \
                  haveged \
+                 krakenx-config \
                  libvirtd \
                  lightdm \
                  NetworkManager \
