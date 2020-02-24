@@ -18,6 +18,7 @@ pacman -S \
   accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
   alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs audacity \
   nfs-utils exfat-utils ntfs-3g gvfs sshfs dosfstools parted gnome-disk-utility \
+  bluez bluez-utils blueman \
   p7zip zip unzip unrar file-roller \
   elementary-icon-theme \
   noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
@@ -139,6 +140,7 @@ systemctl disable systemd-networkd \
 
 # Enable ALL the services
 systemctl enable avahi-daemon \
+                 bluetooth \
                  haveged \
                  krakenx-config \
                  libvirtd \
