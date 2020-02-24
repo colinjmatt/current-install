@@ -124,14 +124,11 @@ cat ./Configs/krakenx-config.service >/etc/krakenx-config.service
 vnclicense -add "$vnclicense"
 vncinitconfig -service-daemon
 
-# Enable rsync backup
+# Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
-sed -i -e "\
-  s/\$backupuser/""$backupuser""/g; \
-  s/\$hostname/""$hostname""/g" \
-  /usr/local/bin/backup.sh
-cat ./Configs/rsync_backup.service >/etc/systemd/system/rsync_backup.service
-cat ./Configs/rsync_backup.timer >/etc/systemd/system/rsync_backup.timer
+read -n 1 -s -r -p "Switch to another TTY and complete the backup script variables. Press any key to continue..."
+cat ./Configs/backup.service >/etc/systemd/system/backup.service
+cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Everything in /usr/local/bin is executable
 chmod +x -R /usr/local/bin/*
@@ -148,7 +145,7 @@ systemctl enable avahi-daemon \
                  lightdm \
                  NetworkManager \
                  org.cups.cupsd \
-                 rsync_backup.timer \
+                 backup.timer \
                  vncserver-x11-serviced
 
 reboot
