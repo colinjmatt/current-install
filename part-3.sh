@@ -119,7 +119,7 @@ sed -i -e "\
 
 # G810 Keyboard and Kraken profiles
 cat ./Configs/g810-led-profile >/etc/g810-led/profile
-cat ./Configs/krakenx-config.service >/etc/krakenx-config.service
+cat ./Configs/krakenx-config.service >/etc/systemd/system/krakenx-config.service
 
 # Enable VNC
 vnclicense -add "$vnclicense"
