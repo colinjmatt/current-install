@@ -12,6 +12,7 @@ cat /mirrorlist >/etc/pacman.d/mirrorlist
 
 # Open encrypted volume and mount root partition
 cryptsetup luksOpen /dev/nvme0n1p2 nvme0n1p2-crypt
+sleep 5
 mount /dev/mapper/vg0-root /mnt
 
 # Delete all files
@@ -19,6 +20,7 @@ read -n 1 -s -r -p "Switch to another TTY and backup anything required. Press an
 rm -rf /mnt/*
 
 # Mount everything else and clear out boot partition
+mkdir /mnt/boot
 mount /dev/nvme0n1p1 /mnt/boot
 rm -rf /mnt/boot/*
 
