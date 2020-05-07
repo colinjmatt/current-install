@@ -85,4 +85,4 @@ done
 systemctl enable systemd-networkd systemd-resolved sshd
 
 # Exit chroot
-exit
+exit 1

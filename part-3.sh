@@ -27,7 +27,7 @@ pacman -S \
   qemu libvirt libgsf virt-manager \
   vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
   rsync ccache speedtest-cli \
-  polkit reflector cpupower haveged neofetch
+  polkit reflector cpupower haveged neofetch htop
 
 # Configure reflector
 echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
@@ -49,13 +49,14 @@ su $user -P -c 'makepkg -si' )
 # All currently required software in AUR
 ( su $user -P -c 'yay -S \
   linux-rt-bfq \
+  google-chrome \
   xfce4-volumed-pulse mugshot \
   p7zip-gui \
   arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
   ttf-ms-fonts \
   brother-dcp-9020cdw brscan4 \
   realvnc-vnc-server realvnc-vnc-viewer \
-  ovmf-git virtio-win dmidecode-git scream-pulse \
+  ovmf-git virtio-win dmidecode-git scream \
   g810-led-git krakenx' )
 
 # Change to RT-BFQ kernel on boot
@@ -64,7 +65,7 @@ sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
 # Setup extra partitions
 cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated and placed at /root/.cryptkey for this crypttab to work
 cat ./Configs/fstab >> /etc/fstab
-mkdir /mnt/{offsite-hetzner,VMs}
+mkdir /mnt/{Backup,Games,VMs}
 read -n 1 -s -r -p "Switch to another TTY, add /root/.cryptkey key and tidy up fstab and crypttab. Press any key to continue..."
 
 # Setup scanner
