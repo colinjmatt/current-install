@@ -1,7 +1,7 @@
 #!/bin/bash
 hostname=""
 user=""
-sshusers=""
+sshuser=""
 dns="" # space separated multiples
 
 # Set region, locale and time synchronisation
@@ -62,8 +62,8 @@ cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
 cat ./Configs/arch-rt-bfq.conf >/boot/loader/entries/arch-rt-bfq.conf
 
-luksencryptuuid=$(blkid | grep crypto_LUKS | awk -F '"' '{print $2}')
-sed -i -e "s/\$luksencryptuuid/""$luksencryptuuid""/g" /boot/loader/entries/arch*.conf
+encryptuuid=$(blkid | grep crypto_LUKS | grep 0n1p2 | awk -F '"' '{print $2}')
+sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch*.conf
 
 # Configure quiet boot
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
