@@ -73,7 +73,13 @@ echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
 # Configure SSH
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
 sed -i -e "s/\$sshusers/""$sshuser""/g" /etc/ssh/sshd_config
+mkdir /home/"$user"/.ssh
 read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $sshuser. Press any key to continue..."
+
+( cd /home/$user
+chmod 0700 .ssh
+chmod 0600 .ssh/*
+chown -R "$user":"$user" .ssh )
 
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
@@ -85,4 +91,4 @@ done
 systemctl enable systemd-networkd systemd-resolved sshd
 
 # Exit chroot
-exit 1
+exit

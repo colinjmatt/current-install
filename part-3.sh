@@ -10,7 +10,7 @@ vnclicense="" # single
 backupuser="backup-user"
 
 # All currently required software in official repos
-pacman -S \
+pacman -S --noconfirm \
   xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
   firewalld ebtables dnsutils net-tools bridge-utils \
   networkmanager networkmanager-openvpn network-manager-applet \
@@ -41,17 +41,18 @@ sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" 
 sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" /etc/makepkg.conf
 
 # Install yay (as a non-priviledged user)
+pacman -S go --noconfirm
 ( cd /tmp || return
 su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
 su $user -P -c 'makepkg -si' )
 
 # All currently required software in AUR
-( su $user -P -c 'yay -S \
+( su $user -P -c 'yay -S --noconfirm \
   linux-rt-bfq \
   google-chrome \
   xfce4-volumed-pulse mugshot \
-  p7zip-gui \
+  p7zip-gui speedtest-cli \
   arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
   ttf-ms-fonts \
   brother-dcp-9020cdw brscan4 \

@@ -1,6 +1,6 @@
 # <file system>                            <dir>       <type><options>                                                                                               <dump><pass>
 # /dev/nvme1n1p1
-UUID=AD23-70E4                             /boot       vfat  rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro  0  2
+UUID=F091-4AED                             /boot       vfat  rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro  0  2
 
 # /dev/mapper/vg0-root
 UUID=b440f556-69da-401d-88ec-6121286102b7  /           ext4  rw,relatime                                                                                                0  1
