@@ -27,7 +27,7 @@ pacman -S --noconfirm \
   qemu libvirt libgsf virt-manager \
   vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
   rsync ccache speedtest-cli \
-  polkit reflector cpupower haveged neofetch htop
+  polkit seahorse reflector cpupower haveged neofetch htop
 
 # Configure reflector
 echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
