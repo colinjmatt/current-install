@@ -49,8 +49,11 @@ echo "$sshuser ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virs
 chmod 0400 /etc/sudoers.d/"$sshuser"
 
 # Add modules and hooks to mkinitcpio and generate
-sed -i "s/HOOKS=.*/HOOKS=(base systemd fsck autodetect modconf block filesystems keyboard)/g" /etc/mkinitcpio.conf
-mkinitcpio -p linux
+sed -i -e "s/HOOKS=.*/HOOKS=(base systemd fsck autodetect modconf block filesystems keyboard)/g; \
+           s/#COMPRESSION=\"xz\"/COMPRESSION=\"xz\"/g; \
+           s/#COMPRESSION_OPTIONS=()/COMPRESSION_OPTIONS=(-0 -T 0)/g" \
+           /etc/mkinitcpio.conf
+mkinitcpio -P
 
 # Setup bootloader
 bootctl install
