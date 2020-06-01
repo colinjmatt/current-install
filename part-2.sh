@@ -50,9 +50,12 @@ echo "options vfio-pci ids=10de:1b06,10de:10ef" > /etc/modprobe.d/vfio.conf
 echo "blacklist nouveau" > /etc/modprobe.d/blacklist.conf
 
 # Add modules and hooks to mkinitcpio and generate
-sed -i "s/MODULES=.*/MODULES=(nls_cp437 vfat vfio_pci vfio vfio_iommu_type1 vfio_virqfd i915)/g" /etc/mkinitcpio.conf
-sed -i "s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g" /etc/mkinitcpio.conf
-mkinitcpio -p linux
+sed -i -e "s/MODULES=.*/MODULES=(nls_cp437 vfat vfio_pci vfio vfio_iommu_type1 vfio_virqfd i915)/g; \
+           s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g; \
+           s/#COMPRESSION=\"xz\"/COMPRESSION=\"xz\"/g; \
+           s/#COMPRESSION_OPTIONS=()/COMPRESSION_OPTIONS=(-0 -T 0)/g" \
+           /etc/mkinitcpio.conf
+mkinitcpio -P
 
 # Setup bootloader
 bootctl install
