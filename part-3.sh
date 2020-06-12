@@ -48,7 +48,7 @@ cd /tmp/yay || return
 su $user -P -c 'makepkg -si' )
 
 # All currently required software in AUR
-( su $user -P -c 'yay -S --noconfirm \
+( su $user -P -c "yay -S --noconfirm \
   linux-rt-bfq \
   google-chrome \
   xfce4-volumed-pulse mugshot \
@@ -58,7 +58,7 @@ su $user -P -c 'makepkg -si' )
   brother-dcp-9020cdw brscan4 \
   realvnc-vnc-server realvnc-vnc-viewer \
   ovmf-git virtio-win dmidecode-git scream \
-  g810-led-git krakenx' )
+  g810-led-git krakenx" )
 
 # Change to RT-BFQ kernel on boot
 sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
