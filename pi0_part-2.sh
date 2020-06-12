@@ -52,9 +52,9 @@ pacman-key --populate archlinuxarm
 
 # Install yay (as a non-priviledged user)
 ( cd /tmp || return
-su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
+su $user -P -c "git clone https://aur.archlinux.org/yay.git"
 cd /tmp/yay || return
-su $user -P -c 'makepkg -si' )
+su $user -P -c "makepkg -si" )
 
 # Install packages
 pacman -S base-devel sudo dnsutils rsync python-pip git i2c-tools lm_sensors nfs-utils
