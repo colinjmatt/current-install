@@ -1,0 +1,11 @@
+[Unit]
+Description=AACS Update
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/aacs.sh
+
+[Install]
+RequiredBy=multi-user.target

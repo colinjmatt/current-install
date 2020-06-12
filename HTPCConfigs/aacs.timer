@@ -1,0 +1,12 @@
+[Unit]
+Description=Monthly AACS update
+
+[Timer]
+OnCalendar=monthly
+Persistent=true
+AccuracySec=1us
+OnStartupSec=180
+RandomizedDelaySec=12h
+
+[Install]
+WantedBy=timers.target
