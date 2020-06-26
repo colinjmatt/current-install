@@ -49,7 +49,7 @@ su $user -P -c 'makepkg -si' )
 
 # All currently required software in AUR
 ( su $user -P -c "yay -S --noconfirm \
-  linux-rt-bfq \
+  linux-rt-bfq-dev \
   google-chrome \
   xfce4-volumed-pulse mugshot \
   p7zip-gui speedtest-cli \

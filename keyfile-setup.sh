@@ -36,7 +36,7 @@ echo ""
 sudo cryptsetup luksAddKey /dev/"$encrypteddrive" /mnt/usbkey/crypt.key --key-slot 1
 
 sudo sed -i -e "s/MODULES=\"/MODULES=\"nls_cp437 vfat\ /g" /etc/mkinitcpio.conf
-mkinitcpio -p linux linux-rt-bfq
+mkinitcpio -P
 
 sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$keydriveuuid"":vfat:\/crypt.key\ /g" /boot/loader/entries/*.conf
 
