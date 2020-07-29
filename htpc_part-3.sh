@@ -39,7 +39,7 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 ( cd /tmp || return
 su $yayuser -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
-su $yayuser -P -c 'makepkg -si; yay -S realvnc-vnc-server google-chrome p7zip-gui reflector-timer barrier aacskeys arc-icon-theme-git moka-icon-theme-git faba-icon-theme-git' )
+su $yayuser -P -c 'makepkg -si; yay -S parsec-bin realvnc-vnc-server google-chrome p7zip-gui reflector-timer barrier aacskeys arc-icon-theme-git moka-icon-theme-git faba-icon-theme-git' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$htpcuser""/g" /etc/lightdm/lightdm.conf

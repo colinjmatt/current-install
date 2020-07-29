@@ -51,6 +51,7 @@ su $user -P -c 'makepkg -si' )
 ( su $user -P -c "yay -S --noconfirm \
   linux-rt-bfq-dev \
   google-chrome \
+  parsec-bin \
   xfce4-volumed-pulse mugshot \
   p7zip-gui speedtest-cli \
   arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
