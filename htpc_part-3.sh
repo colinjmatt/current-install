@@ -81,6 +81,7 @@ systemctl disable systemd-networkd \
 systemctl enable aacs.timer \
                  avahi-daemon \
                  bluetooth \
+                 fstrim.timer \
                  lightdm \
                  NetworkManager \
                  vncserver-x11-serviced

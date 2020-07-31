@@ -144,6 +144,7 @@ systemctl disable systemd-networkd \
 # Enable ALL the services
 systemctl enable avahi-daemon \
                  bluetooth \
+                 fstrim.timer \
                  haveged \
                  krakenx-config \
                  libvirtd \
