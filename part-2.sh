@@ -92,7 +92,9 @@ cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
 for server in $dns; do
   echo "nameserver $server" >> /etc/resolv.conf
 done
-systemctl enable systemd-networkd systemd-resolved sshd
+systemctl enable systemd-networkd \
+                 systemd-resolved \
+                 sshd
 
 # Exit chroot
 exit
