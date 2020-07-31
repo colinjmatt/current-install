@@ -37,8 +37,10 @@ cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
 localectl set-x11-keymap gb
 
 # Optimise AUR compiles
-sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" /etc/makepkg.conf
-sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" /etc/makepkg.conf
+sed -i -e "\
+  s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g; \
+  s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" \
+/etc/makepkg.conf
 
 # Install yay (as a non-priviledged user)
 pacman -S go --noconfirm
