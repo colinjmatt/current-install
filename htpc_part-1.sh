@@ -17,16 +17,16 @@ parted -s /dev/sda mkpart primary ext4 512MiB 16896MiB
 parted -s /dev/sda mkpart primary ext4 16896MiB 100%
 
 mkfs.vfat -F32 /dev/sda1
-mkfs.ext4 /dev/sda2
-mkswap /dev/sda3
+mkswap /dev/sda2
+mkfs.ext4 /dev/sda3
 
-mount /dev/sda2 /mnt
+mount /dev/sda3 /mnt
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
-swapon /dev/sda3
+swapon /dev/sda2
 
 # Install base system
-pacstrap /mnt base base-devel linux linux-firmware systemd-resolvconf openssh wget nano git
+pacstrap /mnt base base-devel amd-ucode linux linux-firmware systemd-resolvconf openssh wget nano git
 
 # Generate fstab for filesystem mounts and add /tmp as ram drive
 genfstab -pU /mnt >>/mnt/etc/fstab
