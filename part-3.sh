@@ -39,6 +39,8 @@ pacman -S --noconfirm \
 # Configure reflector
 echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
+cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
+cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
 
 # Set X keymap
 localectl set-x11-keymap gb
