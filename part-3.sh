@@ -3,11 +3,18 @@ user="user" # single
 hostname="hostname" # single
 domain="x.local" # single
 ipaddress="192.168.0.x" # single
-dns="x.x.x.x; 1.1.1.1; 1.0.0.1" # semi-colon separated multiples
+dns="192.168.0.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
 gateway="192.168.0.1" # single
 printerip="192.168.0.120" # single
 vnclicense="" # single
 backupuser="backup-user"
+
+dns2="${dns//;}"
+
+# Add DNS server(s)
+for server in $dns2; do
+  echo "nameserver $server" >> /etc/resolv.conf
+done
 
 # All currently required software in official repos
 pacman -S --noconfirm \
@@ -50,7 +57,15 @@ cd /tmp/yay || return
 su $user -P -c 'makepkg -si' )
 
 # All currently required software in AUR
-( su $user -P -c "yay -S --noconfirm \
+( su $user -P -c "
+gpg --keyserver pool.sks-keyservers.net \
+  --recv-keys \
+    64254695FFF0AA4466CC19E67B96E8162A8CF5D1 \
+    5ED9A48FC54C0A22D1D0804CEBC26CDB5A56DE73 \
+    E644E2F1D45FA0B2EAA02F33109F098506FF0B14 \
+    ABAF11C65A2970B130ABE3C479BE3E4300411886 \
+    647F28654894E3BD457199BE38DBBDC86092693E
+yay -S --noconfirm \
   linux-rt-bfq-dev \
   google-chrome \
   parsec-bin \
@@ -69,7 +84,9 @@ sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
 # Setup extra partitions
 cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated and placed at /root/.cryptkey for this crypttab to work
 cat ./Configs/fstab >> /etc/fstab
-mkdir /mnt/{Backup,Games,VMs}
+mkdir /mnt/{Backup,VMs}
+chmod -R 0770 /mnt/{Backup,VMs}
+chown root:users /mnt/{Backup,VMs}
 read -n 1 -s -r -p "Switch to another TTY, add /root/.cryptkey key and tidy up fstab and crypttab. Press any key to continue..."
 
 # Setup scanner
@@ -94,7 +111,7 @@ chmod +x /etc/libvirt/hooks/qemu
 ( mkdir /etc/pki
 mkdir /etc/pki/qemu
 cd /etc/pki/qemu || return
-openssl genrsa -nodes -out ca-key.pem 1024
+openssl genrsa -out ca-key.pem 1024
 openssl req -new -x509 -days 750 -key ca-key.pem -out ca-cert.pem -utf8 -subj "/CN=Self Signed"
 openssl genrsa -out server-key.pem 1024
 openssl req -new -key server-key.pem -out server-key.csr -utf8 -subj "/CN=$user"
