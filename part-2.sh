@@ -88,6 +88,7 @@ chown -R "$user":"$user" .ssh )
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
 
+# Enable networking and SSH
 systemctl enable systemd-networkd \
                  systemd-resolved \
                  sshd
