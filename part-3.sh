@@ -164,6 +164,7 @@ systemctl disable systemd-networkd \
 
 # Enable ALL the services
 systemctl enable avahi-daemon \
+                 backup.timer \
                  bluetooth \
                  fstrim.timer \
                  haveged \
@@ -172,7 +173,7 @@ systemctl enable avahi-daemon \
                  lightdm \
                  NetworkManager \
                  org.cups.cupsd \
-                 backup.timer \
+                 reflector.timer \
                  vncserver-x11-serviced
 
 reboot
