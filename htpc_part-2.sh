@@ -34,8 +34,9 @@ sed -i -e " \
   s/\$domain/""$domain""/g" \
 /etc/systemd/network/10-ethernet-static.network
 
-# Add DNS server(s) and enable networking
+# Add DNS server(s)
 for server in $dns; do
+  echo "nameserver $server" >> /etc/resolv.conf
   echo "DNS=$server" >> /etc/systemd/network/10-ethernet-static.network
 done
 
