@@ -18,7 +18,7 @@ pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           gvfs \
           p7zip zip unzip unrar file-roller \
           bluez bluez-utils blueman \
-          firefox vlc libbluray libaacs libdvdcss libdvdread libdvdnav retroarch retroarch-assets-xmb retroarch-assets-ozone flatpak
+          firefox vlc libbluray libaacs libdvdcss libdvdread libdvdnav reflector
 
 # Specifically for AMD graphics
 pacman -S xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
@@ -74,6 +74,11 @@ sed -i -e "\
 vnclicense -add "$vnclicense"
 vncinitconfig -service-daemon
 
+# Configure reflector
+cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
+cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
+cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
+
 # Disable initial networking services
 systemctl disable systemd-networkd \
                   systemd-resolved
@@ -84,6 +89,7 @@ systemctl enable aacs.timer \
                  fstrim.timer \
                  lightdm \
                  NetworkManager \
+                 reflector.timer \
                  vncserver-x11-serviced
 
 reboot
