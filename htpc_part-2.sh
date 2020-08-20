@@ -101,8 +101,10 @@ read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $yayuser. Pres
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
 
-# Enable networking
-systemctl enable systemd-networkd systemd-resolved sshd
+# Enable networking and SSH
+systemctl enable systemd-networkd \
+                 systemd-resolved \
+                 sshd
 
 # Exit chroot
 exit
