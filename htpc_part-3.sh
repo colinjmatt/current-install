@@ -7,7 +7,7 @@ vnclicense="" # License key for VNC
 pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
           noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
-          accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
+          accountsservice ffmpegthumbnailer raw-thumbnailer gnome-keyring \
           alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs \
           elementary-icon-theme \
           gvfs \
