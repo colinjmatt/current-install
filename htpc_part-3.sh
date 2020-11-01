@@ -3,6 +3,9 @@ htpcuser="htpcuser" # Name of main user
 yayuser="yayuser" # Name of user that yay (AUR) will be used for
 vnclicense="" # License key for VNC
 
+# Arch key servers are bad
+echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
+
 # All currently required software in official repos
 pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
           xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
