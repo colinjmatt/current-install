@@ -16,6 +16,9 @@ for server in $dns2; do
   echo "nameserver $server" >> /etc/resolv.conf
 done
 
+# Arch key servers are bad
+echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
+
 # All currently required software in official repos
 pacman -S --noconfirm \
   xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
