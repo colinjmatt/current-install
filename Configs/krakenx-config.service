@@ -1,9 +1,0 @@
-[Unit]
-Description=KrakenX Automatic Configuration
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/env colctl --mode solid --color0 255,0,0 --fan_speed "(20,25),(30,35),(40,50),(45,75),(55,100)" --pump_speed "(20,60),(40,100)"
-
-[Install]
-WantedBy=default.target
