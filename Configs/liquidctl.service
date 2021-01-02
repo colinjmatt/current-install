@@ -1,0 +1,9 @@
+[Unit]
+Description=Liquidctl Configuration
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/liquidctl.sh
+
+[Install]
+WantedBy=default.target
