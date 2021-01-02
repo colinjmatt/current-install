@@ -21,23 +21,27 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
 pacman -S --noconfirm \
-  xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
-  firewalld ebtables dnsutils net-tools bridge-utils \
-  networkmanager networkmanager-openvpn network-manager-applet \
-  xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
-  accountsservice slock ffmpegthumbnailer raw-thumbnailer gnome-keyring \
-  alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs audacity \
-  nfs-utils exfat-utils ntfs-3g gvfs sshfs dosfstools parted gnome-disk-utility \
-  bluez bluez-utils blueman \
-  p7zip zip unzip unrar file-roller \
-  elementary-icon-theme \
-  noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
-  cups cups-pdf sane gscan2pdf djvulibre tesseract tesseract-data-eng \
-  firefox epdfview libreoffice-fresh discord bleachbit \
-  qemu libvirt libgsf virt-manager \
-  vulkan-intel iasl libva-intel-driver gst-libav libvdpau-va-gl \
-  rsync ccache speedtest-cli \
-  polkit seahorse reflector cpupower haveged neofetch htop
+  accountsservice alsa-utils audacity \
+  bleachbit blueman bluez bluez-utils bridge-utils \
+  ccache cpupower cups cups-pdf \
+  discord djvulibre dnsutils dosfstools \
+  ebtables edk2-ovmf epdfview exfat-utils \
+  ffmpegthumbnailer file-roller firefox firewalld \
+  gnome-disk-utility gnome-keyring gscan2pdf gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
+  haveged htop \
+  iasl \
+  libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
+  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
+  p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
+  qemu \
+  raw-thumbnailer reflector rsync \
+  sane seahorse slock speedtest-cli sshfs \
+  tesseract tesseract-data-eng ttf-liberation \
+  unrar unzip \
+  virt-manager vulkan-intel \
+  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr \
+  xterm \
+  zip
 
 # Configure reflector
 echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
@@ -54,33 +58,31 @@ sed -i -e "\
   s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" \
 /etc/makepkg.conf
 
-# Install yay (as a non-priviledged user)
+# Install yay (as a non-priviledged user) and install AUR software
 pacman -S go --noconfirm
 ( cd /tmp || return
 su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
-su $user -P -c 'makepkg -si' )
-
-# All currently required software in AUR
-( su $user -P -c "
-gpg --keyserver pool.sks-keyservers.net \
-  --recv-keys \
-    64254695FFF0AA4466CC19E67B96E8162A8CF5D1 \
-    5ED9A48FC54C0A22D1D0804CEBC26CDB5A56DE73 \
-    E644E2F1D45FA0B2EAA02F33109F098506FF0B14 \
-    ABAF11C65A2970B130ABE3C479BE3E4300411886 \
-    647F28654894E3BD457199BE38DBBDC86092693E
-yay -S --noconfirm \
-  google-chrome \
-  parsec-bin \
-  xfce4-volumed-pulse mugshot \
-  p7zip-gui speedtest-cli \
-  arc-icon-theme-git faba-icon-theme-git moka-icon-theme-git \
-  ttf-ms-fonts \
+su $user -P -c 'makepkg -si; \
+  gpg
+    --keyserver pool.sks-keyservers.net \
+    --recv-keys \
+      64254695FFF0AA4466CC19E67B96E8162A8CF5D1 \
+      5ED9A48FC54C0A22D1D0804CEBC26CDB5A56DE73 \
+      E644E2F1D45FA0B2EAA02F33109F098506FF0B14 \
+      ABAF11C65A2970B130ABE3C479BE3E4300411886 \
+      647F28654894E3BD457199BE38DBBDC86092693E;
+  yay -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
+  google-chrome gst-plugin-libde265 \
+  intel-hybrid-codec-driver \
+  keyleds \
+  mugshot \
+  p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer \
-  ovmf-git virtio-win dmidecode-git scream \
-  g810-led-git krakenx" )
+  scream speedtest-cli \
+  ttf-ms-fonts \
+  virtio-win' )
 
 # Change to RT-BFQ kernel on boot
 sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
@@ -145,7 +147,8 @@ sed -i -e "\
 
 # G810 Keyboard and Kraken profiles
 cat ./Configs/g810-led-profile >/etc/g810-led/profile
-cat ./Configs/krakenx-config.service >/etc/systemd/system/krakenx-config.service
+cat ./Configs/liquidctl.service >/etc/systemd/system/krakenx-config.service
+cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
 
 # Enable VNC
 vnclicense -add "$vnclicense"
@@ -170,9 +173,9 @@ systemctl enable avahi-daemon \
                  bluetooth \
                  fstrim.timer \
                  haveged \
-                 krakenx-config \
                  libvirtd \
                  lightdm \
+                 liquidctl \
                  NetworkManager \
                  org.cups.cupsd \
                  reflector.timer \
