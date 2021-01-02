@@ -7,17 +7,22 @@ vnclicense="" # License key for VNC
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
-pacman -S xorg-server xorg-xrandr xorg-xinput xdg-utils xterm \
-          xfce4 xfce4-goodies lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings gtk-engine-murrine \
-          noto-fonts noto-fonts-emoji noto-fonts-extra noto-fonts-cjk ttf-liberation \
-          accountsservice ffmpegthumbnailer raw-thumbnailer gnome-keyring \
-          alsa-utils pulseaudio pulseaudio-alsa pavucontrol pasystray paprefs \
-          elementary-icon-theme \
-          gvfs \
-          p7zip zip unzip unrar file-roller \
-          bluez bluez-utils blueman \
-          ccache rsync haveged barrier \
-          firefox vlc libbluray libaacs libdvdcss libdvdread libdvdnav reflector
+pacman -S \
+accountsservice alsa-utils \
+barrier blueman bluez bluez-utils \
+ccache \
+ffmpegthumbnailer file-roller firefox \
+gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
+haveged \
+libaacs libbluray libdvdcss libdvdnav libdvdread libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra \
+p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
+raw-thumbnailer reflector rsync \
+ttf-liberation \
+unrar unzip \
+vlc \
+xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+zip
 
 # Specifically for AMD graphics
 pacman -S xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
@@ -41,9 +46,12 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 su $yayuser -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
 su $yayuser -P -c 'makepkg -si; \
-                   yay -S \
-                   parsec-bin realvnc-vnc-server google-chrome p7zip-gui \
-                   arc-icon-theme-git moka-icon-theme-git faba-icon-theme-git' )
+  yay -S \
+  google-chrome \
+  p7zip-gui \
+  parsec-bin \
+  realvnc-vnc-server \
+  rpiplay' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$htpcuser""/g" /etc/lightdm/lightdm.conf
