@@ -2,22 +2,18 @@
 hostname="hostname"
 user="user"
 yayuser="yayuser" # Will be used to install packages and will be added to sudoers
-domain="localdomain" # single value
-ipaddress="0.0.0.0\/24" # single value, backslash is intentional
-dns="1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4" # space separated multiples
-gateway="0.0.0.0" # single value
-
+domain="local.domain" # single value
+ipaddress="192.168.1.x\/24" # single value, backslash is intentional
+dns="1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4" # space separated multiples
+gateway="192.168.1.1" # single value
 
 # Set region, locale and time synchronisation
-rm /etc/localtime
-ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
-echo "en_GB.UTF-8 UTF-8" > /etc/locale.gen
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
 locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
-export LANG=en_GB.UTF-8
 echo "KEYMAP=uk" > /etc/vconsole.conf
 localectl set-keymap uk
-localectl set-locale LANG="en_GB.UTF-8"
 timedatectl set-ntp true
 
 # Create dhcp ethernet connection
@@ -25,7 +21,7 @@ cat ./Configs/20-ethernet-dhcp.network >/etc/systemd/network/20-ethernet-dhcp.ne
 sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/systemd/network/20-ethernet-dhcp.network
 
 # Create static ethernet connection
-cat ./Configs/10-ethernet-static.network >/etc/systemd/network/10-ethernet-static.network
+cat ./HTPCConfigs/10-ethernet-static.network >/etc/systemd/network/10-ethernet-static.network
 sed -i -e " \
   s/\$interface/""$(echo /sys/class/net/en* | cut -d / -f 5 | xargs printf %s)""/g; \
   s/\$ipaddress/""$ipaddress""/g; \
@@ -85,7 +81,7 @@ cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./HTPCConfigs/arch.conf >/boot/loader/entries/arch.conf
 
-uuid=$(blkid | grep sda3 | awk -F '"' '{print $2}')
+uuid=$(blkid | grep nvme0n1p3 | awk -F '"' '{print $2}')
 sed -i -e "s/\$uuid/""$uuid""/g" /boot/loader/entries/arch.conf
 
 # Configure quiet boot
@@ -95,8 +91,13 @@ echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
 
 # Configure SSH
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
-sed -i -e "s/\$yayuser/""$yayuser""/g" /etc/ssh/sshd_config
+sed -i -e "s/\$sshusers/""$yayuser""/g" /etc/ssh/sshd_config
 read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $yayuser. Press any key to continue..."
+
+( cd /home/$yayuser
+chmod 0700 .ssh
+chmod 0600 .ssh/*
+chown -R "$yayuser":"$yayuser" .ssh )
 
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
