@@ -1,19 +1,16 @@
 #!/bin/bash
-hostname=""
-user=""
-sshuser=""
-dns="" # space separated multiples
+hostname="hostname"
+user="user"
+sshuser="sshuser"
+dns="192.168.1.1 1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4" # space separated
 
 # Set region, locale and time synchronisation
-rm /etc/localtime
-ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
-echo "en_GB.UTF-8 UTF-8" > /etc/locale.gen
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
 locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
-export LANG=en_GB.UTF-8
 echo "KEYMAP=uk" > /etc/vconsole.conf
 localectl set-keymap uk
-localectl set-locale LANG="en_GB.UTF-8"
 timedatectl set-ntp true
 
 # Create dhcp ethernet connection
@@ -64,9 +61,8 @@ mkdir -p /etc/pacman.d/hooks
 cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
-cat ./Configs/arch-rt-bfq.conf >/boot/loader/entries/arch-rt-bfq.conf
 
-encryptuuid=$(blkid | grep crypto_LUKS | grep 0n1p2 | awk -F '"' '{print $2}')
+encryptuuid=$(blkid | grep crypto_LUKS | grep 1n1p2 | awk -F '"' '{print $2}')
 sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch*.conf
 
 # Configure quiet boot
