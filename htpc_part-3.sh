@@ -1,5 +1,5 @@
 #!/bin/bash
-htpcuser="htpcuser" # Name of main user
+user="user" # Name of main user
 yayuser="yayuser" # Name of user that yay (AUR) will be used for
 vnclicense="" # License key for VNC
 
@@ -7,32 +7,29 @@ vnclicense="" # License key for VNC
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
-pacman -S \
-accountsservice alsa-utils \
-barrier blueman bluez bluez-utils \
-ccache \
-ffmpegthumbnailer file-roller firefox \
-gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
-haveged \
-libaacs libbluray libdvdcss libdvdnav libdvdread libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
-noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra \
-p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
-raw-thumbnailer reflector rsync \
-ttf-liberation \
-unrar unzip \
-vlc \
-xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
-zip
+pacman -S --noconfirm \
+  accountsservice alsa-utils \
+  barrier blueman bluez bluez-utils \
+  ccache \
+  ffmpegthumbnailer file-roller firefox \
+  gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
+  haveged \
+  libaacs libbluray libdvdcss libdvdnav libdvdread libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra \
+  p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
+  raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
+  ttf-liberation \
+  unrar unzip \
+  vlc \
+  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  zip
 
 # Specifically for AMD graphics
-pacman -S xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
+pacman -S --noconfirm xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
 cat ./HTPCConfigs/20-amdgpu.conf >/etc/X11/xorg.conf.d/20-amdgpu.conf
 
 # Configure reflector
-echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
-cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
-cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
 
 # Set X keymap
 localectl set-x11-keymap gb
@@ -43,10 +40,11 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 
 # Install yay (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
+pacman -S --noconfirm go
 su $yayuser -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
 su $yayuser -P -c 'makepkg -si; \
-  yay -S \
+  yay -S --noconfirm \
   google-chrome \
   p7zip-gui \
   parsec-bin \
@@ -54,13 +52,13 @@ su $yayuser -P -c 'makepkg -si; \
   rpiplay' )
 
 # Set user to autologin
-sed -i "s/#autologin-user=.*/autologin-user=""$htpcuser""/g" /etc/lightdm/lightdm.conf
+sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
 # Setup Blu-Ray playback and Steam
-su -P $htpcuser -c "mkdir -p /home/htpc/.config/aacs; \
+su -P $user -c "mkdir -p /home/htpc/.config/aacs; \
                     wget http://fvonline-db.bplaced.net/fv_download.php?lang=eng -O /tmp/keydb.cfg.zip; \
-                    unzip /tmp/keydb.cfg -d /home/""$htpcuser""/.config/aacs/; \
-                    mv /home/""$htpcuser""/.config/aacs/keydb.cfg /home/""$htpcuser""/.config/aacs/KEYDB.cfg; \
+                    unzip /tmp/keydb.cfg -d /home/""$user""/.config/aacs/; \
+                    mv /home/""$user""/.config/aacs/keydb.cfg /home/""$user""/.config/aacs/KEYDB.cfg; \
                     rm /tmp/keydb.cfg.zip"
 
 sed -i -e "s/load-module\ module-suspend-on-idle/#load-module module-suspend-on-idle/g" /etc/pulse/default.pa
@@ -82,7 +80,6 @@ systemctl enable aacs.timer \
                  fstrim.timer \
                  haveged \
                  lightdm \
-                 reflector.timer \
                  vncserver-x11-serviced
 
 reboot
