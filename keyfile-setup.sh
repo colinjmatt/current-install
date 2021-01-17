@@ -26,7 +26,7 @@ sudo parted -s /dev/"$keydrive" mkpart FAT32
 sudo mkfs.vfat -I /dev/"$keydrive"
 sudo mount /dev/"$keydrive" /mnt/usbkey
 
-keydriveUUID=$(blkid /dev/""$keydrive"" -o value | sed -n "/msdos/{n;p}")
+keydriveUUID=$(blkid /dev/""$keydrive"" -o value | head -n1)
 sudo dd bs=1024 count=4 if=/dev/urandom of=/mnt/usbkey/crypt.key iflag=fullblock
 
 clear
@@ -38,7 +38,7 @@ sudo cryptsetup luksAddKey /dev/"$encrypteddrive" /mnt/usbkey/crypt.key --key-sl
 sudo sed -i -e "s/MODULES=\"/MODULES=\"nls_cp437 vfat\ /g" /etc/mkinitcpio.conf
 mkinitcpio -P
 
-sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$keydriveuuid"":vfat:\/crypt.key\ /g" /boot/loader/entries/*.conf
+sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$keydriveUUID"":vfat:\/crypt.key\ /g" /boot/loader/entries/*.conf
 
 sudo umount /mnt/usbkey
 sudo rm -rf /mnt/usbkey
