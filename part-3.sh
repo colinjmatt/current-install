@@ -1,13 +1,12 @@
 #!/bin/bash
-user="user" # single
-hostname="hostname" # single
-domain="x.local" # single
-ipaddress="192.168.0.x" # single
-dns="192.168.0.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
-gateway="192.168.0.1" # single
-printerip="192.168.0.120" # single
-vnclicense="" # single
-backupuser="backup-user"
+user="user" # single user only
+hostname="hostname" # no fqdn
+domain="x.local"
+ipaddress="192.168.1.x"
+dns="192.168.1.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
+gateway="192.168.1.1"
+printerip="192.168.1.120"
+vnclicense=""
 
 dns2="${dns//;}"
 
@@ -24,13 +23,13 @@ pacman -S --noconfirm \
   accountsservice alsa-utils audacity \
   bleachbit blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
-  discord djvulibre dnsutils dosfstools \
+  discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   ebtables edk2-ovmf epdfview exfat-utils \
   ffmpegthumbnailer file-roller firefox firewalld \
   gnome-disk-utility gnome-keyring gscan2pdf gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
   haveged htop \
   iasl \
-  libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
+  libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
   p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
   qemu \
@@ -39,15 +38,11 @@ pacman -S --noconfirm \
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip \
   virt-manager vulkan-intel \
-  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr \
-  xterm \
+  xdg-utils xf86-video-intel xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
 # Configure reflector
-echo "COUNTRY=UK" >/etc/conf.d/reflector.conf
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
-cat ./Configs/reflector.service >/etc/systemd/system/reflector.service
-cat ./Configs/reflector.timer >/etc/systemd/system/reflector.timer
 
 # Set X keymap
 localectl set-x11-keymap gb
@@ -64,36 +59,22 @@ pacman -S go --noconfirm
 su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
 cd /tmp/yay || return
 su $user -P -c 'makepkg -si; \
-  gpg
-    --keyserver pool.sks-keyservers.net \
-    --recv-keys \
-      64254695FFF0AA4466CC19E67B96E8162A8CF5D1 \
-      5ED9A48FC54C0A22D1D0804CEBC26CDB5A56DE73 \
-      E644E2F1D45FA0B2EAA02F33109F098506FF0B14 \
-      ABAF11C65A2970B130ABE3C479BE3E4300411886 \
-      647F28654894E3BD457199BE38DBBDC86092693E;
   yay -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
-  google-chrome gst-plugin-libde265 \
-  intel-hybrid-codec-driver \
+  google-chrome \
   keyleds \
   mugshot \
   p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer \
-  scream speedtest-cli \
+  scream \
   ttf-ms-fonts \
-  virtio-win' )
-
-# Change to RT-BFQ kernel on boot
-sed -i "s/default\ arch/default\ arch-rt-bfq/g" /boot/loader/loader.conf
+  virtio-win \
+  xfce4-volumed-pulse-git')
 
 # Setup extra partitions
-cat ./Configs/crypttab >>/etc/crypttab # A keyfile needs to be generated and placed at /root/.cryptkey for this crypttab to work
-cat ./Configs/fstab >> /etc/fstab
-mkdir /mnt/{Backup,VMs}
-chmod -R 0770 /mnt/{Backup,VMs}
-chown root:users /mnt/{Backup,VMs}
-read -n 1 -s -r -p "Switch to another TTY, add /root/.cryptkey key and tidy up fstab and crypttab. Press any key to continue..."
+mkdir /mnt/backup
+chmod -R 0770 /mnt/{backup,VMs}
+chown -R root:users /mnt/{backup,VMs}
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
@@ -103,15 +84,33 @@ brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip="$printerip"
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
 # Configure QEMU and libvirt
-cat ./Configs/qemu.conf >/etc/libvirt/qemu.conf
-sed -i -e "s/\$user/""$user""/g" /etc/libvirt/qemu.conf
-cat ./Configs/libvirtd.conf >/etc/libvirt/libvirtd.conf
+sed -i -e "\
+  s/\#user.*/user\ =\ \"""$user""\"/g; \
+  s/\#group.*/group\ =\ \"kvm\"/g" \
+  /etc/libvirt/qemu.conf
 usermod -a -G libvirt $user
 
+mkdir -p /etc/libvirt/{devices,storage,hooks}
+mkdir /etc/libvirt/storage/autostart
+
+# Devices to pass to the gaming VM
+cat ./Configs/logi_keyb.xml >/etc/libvirt/devices
+cat ./Configs/logi_mouse.xml >/etc/libvirt/devices
+cat ./Configs/steam_cont.xml >/etc/libvirt/devices
+
 # Set governor to performance when gaming VM is running to reduce latency
-mkdir /etc/libvirt/hooks
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
 chmod +x /etc/libvirt/hooks/qemu
+
+# Storage options for virt-manager
+cat ./Configs/default.xml >/etc/libvirt/storage/default.xml
+cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
+ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/default.xml
+ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
+
+# VM configs
+cat ./Configs/default.xml >/etc/libvirt/qemu/win10-gaming.xml
+cat ./Configs/default.xml >/etc/libvirt/qemu/win10-work.xml
 
 # Create SSL keys for Spice
 ( mkdir /etc/pki
@@ -129,25 +128,20 @@ sudo chown root:kvm ./*
 sudo chmod 0440 ./* )
 
 # Configure Network Manager
-cat ./Configs/bridge-master.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
+cat ./Configs/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection
 sed -i -e "\
-  s/\$hostname/""$hostname""/g; \
   s/\$domain/""$domain""/g; \
   s/\$ipaddress/""$ipaddress""/g; \
   s/\$dns/""$dns""/g; \
   s/\$gateway/""$gateway""/g" \
 /etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
 
-cat ./Configs/bridge-slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
+cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 enet=$(ls /sys/class/net/ | grep "^en")
-sed -i -e "\
-  s/\$hostname/""$hostname""/g; \
-  s/\$enet/""$enet""/g" \
-/etc/NetworkManager/system-connections/Bridge\ Slave\ "$hostname".nmconnection
+sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 
 # G810 Keyboard and Kraken profiles
-cat ./Configs/g810-led-profile >/etc/g810-led/profile
-cat ./Configs/liquidctl.service >/etc/systemd/system/krakenx-config.service
+cat ./Configs/liquidctl.service >/etc/systemd/system/liquidctl.service
 cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
 
 # Enable VNC
@@ -171,14 +165,14 @@ systemctl disable systemd-networkd \
 systemctl enable avahi-daemon \
                  backup.timer \
                  bluetooth \
+                 cups \
                  fstrim.timer \
                  haveged \
                  libvirtd \
                  lightdm \
                  liquidctl \
                  NetworkManager \
-                 org.cups.cupsd \
-                 reflector.timer \
+                 virtlogd.socket \
                  vncserver-x11-serviced
 
 reboot
