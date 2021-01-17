@@ -1,9 +1,10 @@
 [connection]
-id=Bridge $hostname
+id=Bridge Master
 uuid=f5c343e5-5b69-4757-a55d-c27437cbeba9
 type=bridge
 interface-name=bridge0
 permissions=
+timestamp=1602934966
 
 [bridge]
 multicast-snooping=false
@@ -20,3 +21,5 @@ addr-gen-mode=stable-privacy
 dns-search=
 ip6-privacy=0
 method=ignore
+
+[proxy]
