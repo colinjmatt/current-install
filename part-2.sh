@@ -2,11 +2,11 @@
 hostname="hostname"
 user="user"
 sshuser="sshuser"
-dns="192.168.1.1 1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4" # space separated
 
 # Set region, locale and time synchronisation
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
+sed -i -e "s/\#en_GB.UTF-8\ UTF-8/en_GB.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 echo "KEYMAP=uk" > /etc/vconsole.conf
@@ -76,7 +76,7 @@ sed -i -e "s/\$sshusers/""$sshuser""/g" /etc/ssh/sshd_config
 mkdir /home/"$user"/.ssh
 read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $sshuser. Press any key to continue..."
 
-( cd /home/$user
+( cd /home/$user || exit
 chmod 0700 .ssh
 chmod 0600 .ssh/*
 chown -R "$user":"$user" .ssh )
