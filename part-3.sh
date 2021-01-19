@@ -1,6 +1,5 @@
 #!/bin/bash
 user="user" # single user only
-hostname="hostname" # no fqdn
 domain="x.local"
 ipaddress="192.168.1.x"
 dns="192.168.1.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
@@ -28,18 +27,24 @@ pacman -S --noconfirm \
   ffmpegthumbnailer file-roller firefox firewalld \
   gnome-disk-utility gnome-keyring gscan2pdf gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
   haveged htop \
-  iasl \
-  libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
-  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
+  i2c-tools iasl \
+  libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
+  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings linux-headers liquidctl \
+  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils \
+  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
   p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
   qemu \
   raw-thumbnailer reflector rsync \
   sane seahorse slock speedtest-cli sshfs \
   tesseract tesseract-data-eng ttf-liberation \
-  unrar unzip \
+  unrar unzip usbutils \
   virt-manager vulkan-intel \
   xdg-utils xf86-video-intel xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
+
+# Set depth to 10 bit (current panel is 8 bit)
+# cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
+# sed -i -e "s/\$display/DP1/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
 
 # Configure reflector
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
@@ -62,8 +67,10 @@ su $user -P -c 'makepkg -si; \
   yay -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
   google-chrome \
+  i2c-nct6775-dkms \
   keyleds \
   mugshot \
+  openrgb \
   p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer \
   scream \
@@ -140,9 +147,16 @@ cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections
 enet=$(ls /sys/class/net/ | grep "^en")
 sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 
-# G810 Keyboard and Kraken profiles
+# RGB stuff
+cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
+cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
+
 cat ./Configs/liquidctl.service >/etc/systemd/system/liquidctl.service
 cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
+
+mkdir -p /home/"$user"/.config/keyleds
+cat ./Configs/keyleds.yml >/home/"$user"/.config/keyleds/keyleds.yml
+cat ./Configs/Keyleds.desktop >/home/"$user"/.config/autostart/Keyleds.desktop
 
 # Enable VNC
 vnclicense -add "$vnclicense"
@@ -154,8 +168,16 @@ read -n 1 -s -r -p "Switch to another TTY and complete the backup script variabl
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
-# Everything in /usr/local/bin is executable
-chmod +x -R /usr/local/bin/*
+# Add some services to autostart
+cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
+cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
+
+# Set permissions
+chmod +x -R \
+  /usr/local/bin/*
+chown -R "$user":"$user" \
+  /home/"$user"/.config/keyleds/ \
+  /home/"$user"/.config/autostart
 
 # Disable initial networking services
 systemctl disable systemd-networkd \
@@ -172,6 +194,7 @@ systemctl enable avahi-daemon \
                  lightdm \
                  liquidctl \
                  NetworkManager \
+                 openrgb \
                  virtlogd.socket \
                  vncserver-x11-serviced
 
