@@ -14,19 +14,20 @@ pacman -S --noconfirm \
   ffmpegthumbnailer file-roller firefox \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
   haveged \
-  libaacs libbluray libdvdcss libdvdnav libdvdread libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  mesa mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra \
   p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
   raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
   ttf-liberation \
   unrar unzip \
-  vlc \
-  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  vlc vulkan-radeon \
+  xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
-# Specifically for AMD graphics
-pacman -S --noconfirm xf86-video-amdgpu vulkan-radeon libva-mesa-driver mesa-vdpau
-cat ./HTPCConfigs/20-amdgpu.conf >/etc/X11/xorg.conf.d/20-amdgpu.conf
+# Set depth to 10 bit
+cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
+sed -i -e "s/\$display/HDMI-A-2/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
 
 # Configure reflector
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
@@ -54,20 +55,21 @@ su $yayuser -P -c 'makepkg -si; \
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
-# Setup Blu-Ray playback and Steam
+# Setup Blu-Ray playback
 su -P $user -c "mkdir -p /home/htpc/.config/aacs; \
                     wget http://fvonline-db.bplaced.net/fv_download.php?lang=eng -O /tmp/keydb.cfg.zip; \
                     unzip /tmp/keydb.cfg -d /home/""$user""/.config/aacs/; \
                     mv /home/""$user""/.config/aacs/keydb.cfg /home/""$user""/.config/aacs/KEYDB.cfg; \
                     rm /tmp/keydb.cfg.zip"
 
-sed -i -e "s/load-module\ module-suspend-on-idle/#load-module module-suspend-on-idle/g" /etc/pulse/default.pa
-
 # AACS monthly update for Blu Ray playback (for as long as the dependent website is up)
 cat ./HTPCConfigs/aacs.service >/etc/systemd/system/aacs.service
 cat ./HTPCConfigs/aacs.timer >/etc/systemd/system/aacs.timer
 cat ./HTPCConfigs/aacs.sh >/usr/local/bin/aacs.sh
 chmod +x /usr/local/bin/aacs.sh
+
+# No delay of sound starting in Pulse
+sed -i -e "s/load-module\ module-suspend-on-idle/#load-module\ module-suspend-on-idle/g" /etc/pulse/default.pa /etc/pulse/system.pa
 
 # Enable VNC
 vnclicense -add "$vnclicense"
