@@ -4,12 +4,13 @@ user="user"
 yayuser="yayuser" # Will be used to install packages and will be added to sudoers
 domain="local.domain" # single value
 ipaddress="192.168.1.x\/24" # single value, backslash is intentional
-dns="1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4" # space separated multiples
+dns="192.168.1.1 1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4" # space separated multiples
 gateway="192.168.1.1" # single value
 
 # Set region, locale and time synchronisation
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
+sed -i -e "s/\#en_GB.UTF-8\ UTF-8/en_GB.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 echo "KEYMAP=uk" > /etc/vconsole.conf
@@ -94,10 +95,9 @@ cat ./Configs/sshd_config >/etc/ssh/sshd_config
 sed -i -e "s/\$sshusers/""$yayuser""/g" /etc/ssh/sshd_config
 read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $yayuser. Press any key to continue..."
 
-( cd /home/$yayuser
-chmod 0700 .ssh
-chmod 0600 .ssh/*
-chown -R "$yayuser":"$yayuser" .ssh )
+chmod 0700 /home/"$yayuser"/.ssh
+chmod 0600 /home/"$yayuser"/.ssh/*
+chown -R "$yayuser":"$yayuser" /home/"$yayuser"/.ssh
 
 # Fix system freezes when copying lots of/huge files
 cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
