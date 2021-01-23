@@ -91,11 +91,11 @@ brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip="$printerip"
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
 # Configure QEMU and libvirt
-sed -i -e "\
-  s/\#user.*/user\ =\ \"""$user""\"/g; \
-  s/\#group.*/group\ =\ \"kvm\"/g" \
-  /etc/libvirt/qemu.conf
+cat ./Configs/attach.sh >/usr/local/bin/attach.sh
+cat ./Configs/qemu.conf >>/etc/libvirt/qemu.conf
+sed -i -e "s/\user.*/user\ =\ \"""$user""\"/g" /etc/libvirt/qemu.conf
 usermod -a -G libvirt $user
+usermod -a -G input $user
 
 mkdir -p /etc/libvirt/{devices,storage,hooks}
 mkdir /etc/libvirt/storage/autostart
@@ -170,7 +170,6 @@ cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Add some services to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
-cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Set permissions
 chmod +x -R \
