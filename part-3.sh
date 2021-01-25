@@ -170,6 +170,7 @@ cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Add some services to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
+cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Set permissions
 chmod +x -R \
