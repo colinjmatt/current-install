@@ -1,8 +1,7 @@
 #!/bin/bash
 smbus=$(i2cdetect -l | grep smbus | awk -F ' ' '{print $1}')
 ledcontroller=$(grep -rnw /sys/class/hidraw/hidraw*/device/uevent -e 'AsusTek Computer Inc. AURA LED Controller' | awk -F ':' '{print $1}' | awk -F '/' '{print $5}')
-display=$(grep -rnw /sys/class/hidraw/hidraw*/device/uevent -e 'AsusTek Computer Inc. AURA LED Controller' | awk -F ':' '{print $1}' | awk -F '/' '{print $5}')
-ROG Gaming Display Aura Device ROG Gaming Display Aura Device
+display=$(grep -rnw /sys/class/hidraw/hidraw*/device/uevent -e 'ROG Gaming Display Aura Device ROG Gaming Display Aura Device' | awk -F ':' '{print $1}' | awk -F '/' '{print $5}')
 
 chmod 777 /dev/"$ledcontroller" /dev/"$display"
 
