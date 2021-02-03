@@ -55,6 +55,9 @@ su $yayuser -P -c 'makepkg -si; \
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
+# Lightdm needs to wait for graphics to load (SSD first world issues)
+sed -i "s/#logind-check-graphical=.*/logind-check-graphical=true/g" /etc/lightdm/lightdm.conf
+
 # Setup Blu-Ray playback
 su -P $user -c "mkdir -p /home/htpc/.config/aacs; \
                     wget http://fvonline-db.bplaced.net/fv_download.php?lang=eng -O /tmp/keydb.cfg.zip; \
