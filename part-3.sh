@@ -58,13 +58,12 @@ sed -i -e "\
   s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" \
 /etc/makepkg.conf
 
-# Install yay (as a non-priviledged user) and install AUR software
-pacman -S go --noconfirm
+# Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su $user -P -c 'git clone https://aur.archlinux.org/yay.git'
-cd /tmp/yay || return
-su $user -P -c 'makepkg -si; \
-  yay -S --noconfirm \
+su $yayuser -P -c 'git clone https://aur.archlinux.org/paru.git'
+cd /tmp/paru || return
+su $yayuser -P -c 'makepkg -si --noconfirm; \
+  paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
   google-chrome \
   i2c-nct6775-dkms \
@@ -90,6 +89,9 @@ brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip="$printerip"
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
+# Lightdm needs to wait for graphics to load (SSD first world issues)
+sed -i "s/#logind-check-graphical=.*/logind-check-graphical=true/g" /etc/lightdm/lightdm.conf
+
 # Configure QEMU and libvirt
 cat ./Configs/attach.sh >/usr/local/bin/attach.sh
 cat ./Configs/qemu.conf >>/etc/libvirt/qemu.conf
@@ -101,9 +103,8 @@ mkdir -p /etc/libvirt/{devices,storage,hooks}
 mkdir /etc/libvirt/storage/autostart
 
 # Devices to pass to the gaming VM
-cat ./Configs/logi_keyb.xml >/etc/libvirt/devices
-cat ./Configs/logi_mouse.xml >/etc/libvirt/devices
-cat ./Configs/steam_cont.xml >/etc/libvirt/devices
+cat ./Configs/logi_keyb.xml >/etc/libvirt/devices/logi_keyb.xml
+cat ./Configs/logi_mouse.xml >/etc/libvirt/devices/logi_mouse.xml
 
 # Set governor to performance when gaming VM is running to reduce latency
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
@@ -156,7 +157,10 @@ cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
 
 mkdir -p /home/"$user"/.config/keyleds
 cat ./Configs/keyleds.yml >/home/"$user"/.config/keyleds/keyleds.yml
+
+mkdir -p /home/"$user"/.config/autostart
 cat ./Configs/Keyleds.desktop >/home/"$user"/.config/autostart/Keyleds.desktop
+cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Enable VNC
 vnclicense -add "$vnclicense"
@@ -168,9 +172,8 @@ read -n 1 -s -r -p "Switch to another TTY and complete the backup script variabl
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
-# Add some services to autostart
+# Add scream listener to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
-cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Set permissions
 chmod +x -R \
