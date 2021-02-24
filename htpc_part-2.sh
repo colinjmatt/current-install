@@ -69,9 +69,9 @@ chmod 0400 /etc/sudoers.d/"$yayuser"
 
 # Add modules and hooks to mkinitcpio and generate
 sed -i -e " \
+  s/MODULES=.*/MODULES=(amdgpu)/g; \
   s/HOOKS=.*/HOOKS=(base systemd fsck autodetect modconf block filesystems keyboard)/g; \
-  s/#COMPRESSION=\"xz\"/COMPRESSION=\"xz\"/g; \
-  s/#COMPRESSION_OPTIONS=()/COMPRESSION_OPTIONS=(-0 -T 0)/g" \
+  s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
 mkinitcpio -P
 
