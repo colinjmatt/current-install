@@ -39,13 +39,12 @@ localectl set-x11-keymap gb
 sed -i "s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g" /etc/makepkg.conf
 sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 
-# Install yay (as a non-priviledged user) and install AUR software
+# Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-pacman -S --noconfirm go
-su $yayuser -P -c 'git clone https://aur.archlinux.org/yay.git'
-cd /tmp/yay || return
-su $yayuser -P -c 'makepkg -si; \
-  yay -S --noconfirm \
+su $yayuser -P -c 'git clone https://aur.archlinux.org/paru.git'
+cd /tmp/paru || return
+su $yayuser -P -c 'makepkg -si --noconfirm; \
+  paru -S --noconfirm \
   google-chrome \
   p7zip-gui \
   parsec-bin \
