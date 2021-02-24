@@ -7,7 +7,7 @@ loadkeys uk
 timedatectl set-ntp true
 
 # Sort the mirrorlist so downloads are fast enough and from teh correct location
-reflector --country 'United Kingdom' --latest 200 --age 24 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country 'United Kingdom' --protocol https --latest 50 --fastest 8 --age 24 --sort rate --save /etc/pacman.d/mirrorlist
 
 # Create partitions, create and open encrypted volume and mount all partitions
 parted -s /dev/nvme1n1 mklabel gpt
