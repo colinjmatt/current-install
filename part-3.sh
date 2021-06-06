@@ -60,7 +60,7 @@ sed -i -e "\
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su $yayuser -P -c 'git clone https://aur.archlinux.org/paru.git'
+su $yayuser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru || return
 su $yayuser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
