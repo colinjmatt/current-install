@@ -2,6 +2,7 @@
 user="user" # Name of main user
 yayuser="yayuser" # Name of user that yay (AUR) will be used for
 vnclicense="" # License key for VNC
+barrierserver="" # Machine that will control this machine via barrier
 
 # Arch key servers are bad
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
@@ -41,15 +42,14 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su $yayuser -P -c 'git clone https://aur.archlinux.org/paru.git'
+su $yayuser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru || return
 su $yayuser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   google-chrome \
-  p7zip-gui \
-  parsec-bin \
-  realvnc-vnc-server \
-  rpiplay' )
+  p7zip-gui parsec-bin \
+  realvnc-vnc-server rpiplay \
+  shairplay-git' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
@@ -72,6 +72,17 @@ chmod +x /usr/local/bin/aacs.sh
 
 # No delay of sound starting in Pulse
 sed -i -e "s/load-module\ module-suspend-on-idle/#load-module\ module-suspend-on-idle/g" /etc/pulse/default.pa /etc/pulse/system.pa
+
+# Set autostarting programs
+mkdir -p /home/"$user"/.config/autostart
+cat ./Configs/Barrier.desktop >/home/"$user"/.config/autostart/Barrier.desktop
+cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
+cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
+chown "$user":"$user" /home/"$user"/.config/autostart/*
+
+sed -i "s/\$barrierserver/""$barrierserver""/g" /home/"$user"/.config/autostart/Barrier.desktop
+
+cat ./HTPCConfigs/libao.conf >/etc/libao.conf
 
 # Enable VNC
 vnclicense -add "$vnclicense"
