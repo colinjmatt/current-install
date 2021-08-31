@@ -6,7 +6,6 @@ Name=Shairplay
 Comment=
 Exec=shairplay -a HTPC-Audio --server_port=5001 --hwaddr=00:00:00:00:00:01
 OnlyShowIn=XFCE;
-RunHook=0
 StartupNotify=false
 Terminal=false
 Hidden=false
