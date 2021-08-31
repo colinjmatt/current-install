@@ -6,7 +6,6 @@ Name=RPi-play
 Comment=
 Exec=rpiplay -n HTPC-Video --server_port=5000 --hwaddr=00:00:00:00:00:00
 OnlyShowIn=XFCE;
-RunHook=0
 StartupNotify=false
 Terminal=false
 Hidden=false
