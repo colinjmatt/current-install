@@ -6,7 +6,6 @@ Name=Barrier
 Comment=
 Exec=barrierc --daemon --enable-crypto $barrierserver
 OnlyShowIn=XFCE;
-RunHook=0
 StartupNotify=false
 Terminal=false
 Hidden=false
