@@ -17,9 +17,10 @@ pacman -S --noconfirm \
   haveged \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau \
-  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra \
+  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
   raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
+  sshfs \
   ttf-liberation \
   unrar unzip \
   vlc vulkan-radeon \
