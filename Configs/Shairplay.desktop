@@ -2,9 +2,9 @@
 Encoding=UTF-8
 Version=0.9.4
 Type=Application
-Name=RPi-play
+Name=Shairplay
 Comment=
-Exec=rpiplay -n HTPC-Video --server_port=5000 --hwaddr=00:00:00:00:00:00
+Exec=shairplay -a $machine-Audio --server_port=5001 --hwaddr=00:00:00:00:00:01
 OnlyShowIn=XFCE;
 StartupNotify=false
 Terminal=false
