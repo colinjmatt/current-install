@@ -1,5 +1,6 @@
 #!/bin/bash
 user="user" # single user only
+machine="machine" # Friendly computer name for airplay stuff
 domain="x.local"
 ipaddress="192.168.1.x"
 dns="192.168.1.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
@@ -71,8 +72,8 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   mugshot \
   openrgb \
   p7zip-gui parsec-bin \
-  realvnc-vnc-server realvnc-vnc-viewer \
-  scream \
+  realvnc-vnc-server realvnc-vnc-viewer rpiplay \
+  scream shairplay-git \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse-git')
@@ -174,6 +175,18 @@ cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Add scream listener to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
+
+# Shairplay & RPi-play
+mkdir -p /home/"$user"/.config/autostart
+cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
+cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
+chown "$user":"$user" /home/"$user"/.config/autostart/*
+
+sed -i -e "s/$machine/""$machine""/g" \
+  /home/"$user"/.config/autostart/RPi-play.desktop \
+  /home/"$user"/.config/autostart/Shairplay.desktop
+
+cat ./Configs/libao.conf >/etc/libao.conf
 
 # Set permissions
 chmod +x -R \
