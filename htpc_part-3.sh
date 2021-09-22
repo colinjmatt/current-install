@@ -1,6 +1,7 @@
 #!/bin/bash
 user="user" # Name of main user
 yayuser="yayuser" # Name of user that yay (AUR) will be used for
+machine="machine" # Friendly computer name for airplay stuff
 vnclicense="" # License key for VNC
 barrierserver="" # Machine that will control this machine via barrier
 
@@ -76,14 +77,18 @@ sed -i -e "s/load-module\ module-suspend-on-idle/#load-module\ module-suspend-on
 
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
-cat ./Configs/Barrier.desktop >/home/"$user"/.config/autostart/Barrier.desktop
+cat ./HTPCConfigs/Barrier.desktop >/home/"$user"/.config/autostart/Barrier.desktop
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
 
+sed -i -e "s/$machine/""$machine""/g" \
+  /home/"$user"/.config/autostart/RPi-play.desktop \
+  /home/"$user"/.config/autostart/Shairplay.desktop
+
 sed -i "s/\$barrierserver/""$barrierserver""/g" /home/"$user"/.config/autostart/Barrier.desktop
 
-cat ./HTPCConfigs/libao.conf >/etc/libao.conf
+cat ./Configs/libao.conf >/etc/libao.conf
 
 # Enable VNC
 vnclicense -add "$vnclicense"
