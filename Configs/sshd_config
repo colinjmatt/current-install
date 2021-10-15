@@ -1,6 +1,6 @@
 AllowUsers $sshusers
 AuthenticationMethods publickey
-AuthorizedKeysFile .ssh/id_rsa.pub
+AuthorizedKeysFile .ssh/authorized_keys
 ChallengeResponseAuthentication no
 IgnoreRhosts yes
 PasswordAuthentication no
