@@ -70,7 +70,7 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   keyleds \
   mugshot \
-  openrgb \
+  openrgb-bin \
   p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   scream shairplay-git \
