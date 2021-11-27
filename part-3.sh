@@ -36,7 +36,7 @@ pacman -S --noconfirm \
   p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
   qemu \
   raw-thumbnailer reflector rsync \
-  sane seahorse slock speedtest-cli sshfs \
+  sane seahorse slock speedtest-cli sshfs swtpm\
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
   virt-manager vulkan-intel \
