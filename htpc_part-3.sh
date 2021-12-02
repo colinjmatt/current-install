@@ -2,6 +2,7 @@
 user="user" # Name of main user
 auruser="auruser" # Name of user that yay (AUR) will be used for
 machine="machine" # Friendly computer name for airplay stuff
+domain="local.domain" # Domain this machine will run on
 vnclicense="" # License key for VNC
 synergyserver="" # Machine that will control this machine via synergy
 
@@ -88,6 +89,8 @@ sed -i -e "s/$machine/""$machine""/g" \
 
 sed -i " \
   s/\$synergyserver/""$synergyserver""/g \
+  s/\$machine/""$machine""/g \
+  s/\$domain/""$domain""/g \
   s/\$user/""$user""/g" \
 /home/"$user"/.config/autostart/Synergy.desktop
 
