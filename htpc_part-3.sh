@@ -1,9 +1,9 @@
 #!/bin/bash
 user="user" # Name of main user
-yayuser="yayuser" # Name of user that yay (AUR) will be used for
+auruser="auruser" # Name of user that yay (AUR) will be used for
 machine="machine" # Friendly computer name for airplay stuff
 vnclicense="" # License key for VNC
-barrierserver="" # Machine that will control this machine via barrier
+synergyserver="" # Machine that will control this machine via synergy
 
 # Arch key servers are bad
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
@@ -11,7 +11,7 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 # All currently required software in official repos
 pacman -S --noconfirm \
   accountsservice alsa-utils \
-  barrier blueman bluez bluez-utils \
+  blueman bluez bluez-utils \
   ccache \
   ffmpegthumbnailer file-roller firefox \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
@@ -44,14 +44,14 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su $yayuser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
+su $auruser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru || return
-su $yayuser -P -c 'makepkg -si --noconfirm; \
+su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   google-chrome \
   p7zip-gui parsec-bin \
   realvnc-vnc-server rpiplay \
-  shairplay-git' )
+  shairplay-git synergy1-bin' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
@@ -77,7 +77,7 @@ sed -i -e "s/load-module\ module-suspend-on-idle/#load-module\ module-suspend-on
 
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
-cat ./HTPCConfigs/Barrier.desktop >/home/"$user"/.config/autostart/Barrier.desktop
+cat ./HTPCConfigs/Synergy.desktop >/home/"$user"/.config/autostart/Synergy.desktop
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
@@ -86,7 +86,10 @@ sed -i -e "s/$machine/""$machine""/g" \
   /home/"$user"/.config/autostart/RPi-play.desktop \
   /home/"$user"/.config/autostart/Shairplay.desktop
 
-sed -i "s/\$barrierserver/""$barrierserver""/g" /home/"$user"/.config/autostart/Barrier.desktop
+sed -i " \
+  s/\$synergyserver/""$synergyserver""/g \
+  s/\$user/""$user""/g" \
+/home/"$user"/.config/autostart/Synergy.desktop
 
 cat ./Configs/libao.conf >/etc/libao.conf
 
