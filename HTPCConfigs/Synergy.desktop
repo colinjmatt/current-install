@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.9.4
+Type=Application
+Name=Synergy
+Comment=
+Exec=/usr/bin/synergyc -f --no-tray --debug INFO --name htpc.home.matthews.uk.net --enable-crypto --tls-cert /home/$user/.synergy/SSL/Synergy.pem $synergyserver:24800
+OnlyShowIn=XFCE;
+StartupNotify=false
+Terminal=false
+Hidden=false
