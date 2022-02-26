@@ -17,7 +17,7 @@ pacman -S --noconfirm \
   ffmpegthumbnailer file-roller firefox \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
   haveged \
-  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
@@ -46,7 +46,7 @@ sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j9\"/g" /etc/makepkg.conf
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
 su $auruser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
-cd /tmp/paru || return
+cd /tmp/paru-bin || return
 su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   google-chrome \
