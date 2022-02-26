@@ -30,7 +30,7 @@ pacman -S --noconfirm \
   haveged htop \
   i2c-tools iasl \
   libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
-  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings linux-headers liquidctl \
+  libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings linux-headers liquidctl \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
