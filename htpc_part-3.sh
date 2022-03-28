@@ -11,21 +11,22 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
 pacman -S --noconfirm \
-  accountsservice alsa-utils \
+  accountsservice alsa-plugins alsa-utils \
   blueman bluez bluez-utils \
   ccache \
   ffmpegthumbnailer file-roller firefox \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
-  haveged \
+  haveged helvum \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
-  p7zip paprefs pasystray pavucontrol pulseaudio pulseaudio-alsa \
+  p7zip paprefs pasystray pipewire pipewire-alsa pipewire-pulse \
   raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
   sshfs \
   ttf-liberation \
   unrar unzip \
   vlc vulkan-radeon \
+  wireplumber \
   xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
@@ -73,8 +74,22 @@ cat ./HTPCConfigs/aacs.timer >/etc/systemd/system/aacs.timer
 cat ./HTPCConfigs/aacs.sh >/usr/local/bin/aacs.sh
 chmod +x /usr/local/bin/aacs.sh
 
-# No delay of sound starting in Pulse
-sed -i -e "s/load-module\ module-suspend-on-idle/#load-module\ module-suspend-on-idle/g" /etc/pulse/default.pa /etc/pulse/system.pa
+# No delay of sound starting in Pipewire
+mkdir -p /etc/wireplumber/main.lua.d/
+cp /usr/share/wireplumber/main.lua.d/50-alsa-config.lua /etc/wireplumber/main.lua.d/
+sed -i -e "s/--\[\"session.suspend-timeout-seconds\"\].*/\[\"session.suspend-timeout-seconds\"\]\ =\ 0,/g" /etc/wireplumber/main.lua.d/50-alsa-config.lua
+
+# Install Steam
+sed -i -e " \
+  s/#\[multilib\]/\[multilib\]/g; \
+  s/#Include\ =\ \/etc\/pacman.d\/mirrorlist/Include\ =\ \/etc\/pacman.d\/mirrorlist/g" \
+/etc/pacman.conf
+
+pacman -S lib32-mesa lib32-vulkan-radeon lib32-systemd lib32-fontconfig steam steam-native-runtime --noconfirm
+sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
+locale-gen
+
+# lib32-libva-mesa-driver lib32-mesa-vdpau amdvlk
 
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
