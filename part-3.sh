@@ -20,26 +20,27 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
 pacman -S --noconfirm \
-  accountsservice alsa-utils audacity \
+  accountsservice alsa-plugins alsa-utils audacity \
   bleachbit blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   ebtables edk2-ovmf epdfview exfat-utils \
   ffmpegthumbnailer file-roller firefox firewalld \
   gnome-disk-utility gnome-keyring gscan2pdf gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
-  haveged htop \
-  i2c-tools iasl \
+  haveged helvum htop \
+  i2c-tools i7z iasl \
   libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
   libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings linux-headers liquidctl \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
-  p7zip paprefs parted pasystray pavucontrol polkit pulseaudio pulseaudio-alsa \
+  p7zip paprefs parted pasystray pavucontrol polkit pipewire pipewire-alsa pipewire-pulse \
   qemu \
   raw-thumbnailer reflector rsync \
   sane seahorse slock speedtest-cli sshfs swtpm\
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
   virt-manager vulkan-intel \
+  wireplumber \
   xdg-utils xf86-video-intel xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
