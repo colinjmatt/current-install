@@ -1,5 +1,5 @@
 #!/bin/bash
-user="user" # Name of main user
+user="" # Name of main user
 auruser="auruser" # Name of user that yay (AUR) will be used for
 machine="machine" # Friendly computer name for airplay stuff
 domain="local.domain" # Domain this machine will run on
@@ -22,7 +22,7 @@ pacman -S --noconfirm \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pipewire pipewire-alsa pipewire-pulse \
   raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
-  sshfs \
+  shairplay sshfs \
   ttf-liberation \
   unrar unzip \
   vlc vulkan-radeon \
@@ -53,7 +53,7 @@ su $auruser -P -c 'makepkg -si --noconfirm; \
   google-chrome \
   p7zip-gui parsec-bin \
   realvnc-vnc-server rpiplay \
-  shairplay-git synergy1-bin' )
+  synergy1-bin' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
@@ -79,18 +79,6 @@ mkdir -p /etc/wireplumber/main.lua.d/
 cp /usr/share/wireplumber/main.lua.d/50-alsa-config.lua /etc/wireplumber/main.lua.d/
 sed -i -e "s/--\[\"session.suspend-timeout-seconds\"\].*/\[\"session.suspend-timeout-seconds\"\]\ =\ 0,/g" /etc/wireplumber/main.lua.d/50-alsa-config.lua
 
-# Install Steam
-sed -i -e " \
-  s/#\[multilib\]/\[multilib\]/g; \
-  s/#Include\ =\ \/etc\/pacman.d\/mirrorlist/Include\ =\ \/etc\/pacman.d\/mirrorlist/g" \
-/etc/pacman.conf
-
-pacman -S lib32-mesa lib32-vulkan-radeon lib32-systemd lib32-fontconfig steam steam-native-runtime --noconfirm
-sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
-locale-gen
-
-# lib32-libva-mesa-driver lib32-mesa-vdpau amdvlk
-
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
 cat ./HTPCConfigs/Synergy.desktop >/home/"$user"/.config/autostart/Synergy.desktop
@@ -98,7 +86,7 @@ cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
 
-sed -i -e "s/$machine/""$machine""/g" \
+sed -i -e "s/\$machine/""$machine""/g" \
   /home/"$user"/.config/autostart/RPi-play.desktop \
   /home/"$user"/.config/autostart/Shairplay.desktop
 
