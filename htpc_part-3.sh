@@ -20,7 +20,7 @@ pacman -S --noconfirm \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
-  p7zip paprefs pasystray pipewire pipewire-alsa pipewire-pulse \
+  p7zip paprefs pasystray pavucontrol pipewire pipewire-alsa pipewire-pulse \
   raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
   shairplay sshfs \
   ttf-liberation \
