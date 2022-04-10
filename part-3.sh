@@ -21,7 +21,7 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 # All currently required software in official repos
 pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils audacity \
-  bleachbit blueman bluez bluez-utils bridge-utils \
+  bashtop blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   ebtables edk2-ovmf epdfview exfat-utils \
@@ -69,7 +69,6 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   google-chrome \
   i2c-nct6775-dkms \
-  keyleds \
   mugshot \
   openrgb-bin \
   p7zip-gui parsec-bin \
@@ -157,11 +156,7 @@ cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
 cat ./Configs/liquidctl.service >/etc/systemd/system/liquidctl.service
 cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
 
-mkdir -p /home/"$user"/.config/keyleds
-cat ./Configs/keyleds.yml >/home/"$user"/.config/keyleds/keyleds.yml
-
 mkdir -p /home/"$user"/.config/autostart
-cat ./Configs/Keyleds.desktop >/home/"$user"/.config/autostart/Keyleds.desktop
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Enable VNC
@@ -173,6 +168,15 @@ cat ./Configs/backup.sh >/usr/local/bin/backup.sh
 read -n 1 -s -r -p "Switch to another TTY and complete the backup script variables. Press any key to continue..."
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
+
+# Configure pipewire to output to all devices
+cp /usr/share/pipewire/pipewire-pulse.conf /etc/pipewire/
+sed -i 's/    #{ path = "pactl"        args = "load-module module-switch-on-connect" }/    { path = "pactl"        args = "load-module module-switch-on-connect" }/g' \
+/etc/pipewire/pipewire-pulse.conf
+sed -i '/    { path = "pactl"        args = "load-module module-switch-on-connect" }/a\    { path = "pactl"        args = "load-module module-combine-sink" }' \
+/etc/pipewire/pipewire-pulse.conf
+pactl set-default-sink combined
+pactl set-default-source combined
 
 # Add scream listener to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
@@ -193,7 +197,6 @@ cat ./Configs/libao.conf >/etc/libao.conf
 chmod +x -R \
   /usr/local/bin/*
 chown -R "$user":"$user" \
-  /home/"$user"/.config/keyleds/ \
   /home/"$user"/.config/autostart
 
 # Disable initial networking services
