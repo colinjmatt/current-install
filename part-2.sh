@@ -8,9 +8,11 @@ ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
 sed -i -e "s/\#en_GB.UTF-8\ UTF-8/en_GB.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
+
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 echo "KEYMAP=uk" > /etc/vconsole.conf
 localectl set-keymap uk
+
 timedatectl set-ntp true
 
 # Create dhcp ethernet connection
@@ -53,6 +55,7 @@ sed -i -e " \
   s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
+sed -i -e "s/PRESETS=.*/PRESETS=(\'default\')/g" /etc/mkinitcpio.d/linux.preset
 mkinitcpio -P
 
 # Setup bootloader
