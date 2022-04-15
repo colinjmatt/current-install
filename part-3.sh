@@ -1,12 +1,12 @@
 #!/bin/bash
 user="user" # single user only
+yayuser=""
 machine="machine" # Friendly computer name for airplay stuff
 domain="x.local"
 ipaddress="192.168.1.x"
 dns="192.168.1.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
 gateway="192.168.1.1"
 printerip="192.168.1.120"
-vnclicense=""
 
 dns2="${dns//;}"
 
@@ -24,19 +24,18 @@ pacman -S --noconfirm \
   bashtop blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
-  ebtables edk2-ovmf epdfview exfat-utils \
+  edk2-ovmf epdfview exfat-utils \
   ffmpegthumbnailer file-roller firefox firewalld \
-  gnome-disk-utility gnome-keyring gscan2pdf gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
-  haveged helvum htop \
-  i2c-tools i7z iasl \
-  libgsf libreoffice-fresh libva-intel-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
-  libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings linux-headers liquidctl \
-  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn nfs-utils \
-  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
-  p7zip paprefs parted pasystray pavucontrol polkit pipewire pipewire-alsa pipewire-pulse \
+  gnome-disk-utility gnome-icon-theme-extras gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
+  haveged helvum htop hunspell-en_gb \
+  i2c-tools i7z iasl intel-media-driver \
+  libgsf libopenraw libreoffice-fresh libva-utils libvdpau-va-gl libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
+  mesa mesa-vdpau libva-mesa-driver \
+  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
+  p7zip paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf \
   qemu \
-  raw-thumbnailer reflector rsync \
-  sane seahorse slock speedtest-cli sshfs swtpm\
+  reflector rsync \
+  sane seahorse shairplay slock speedtest-cli sshfs swtpm sysstat \
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
   virt-manager vulkan-intel \
@@ -63,25 +62,20 @@ sed -i -e "\
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
 su $yayuser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
-cd /tmp/paru || return
+cd /tmp/paru-bin || return
 su $yayuser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
-  google-chrome \
+  gnome-icon-theme google-chrome \
   i2c-nct6775-dkms \
   mugshot \
   openrgb-bin \
   p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
-  scream shairplay-git \
+  scream \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse-git')
-
-# Setup extra partitions
-mkdir /mnt/backup
-chmod -R 0770 /mnt/{backup,VMs}
-chown -R root:users /mnt/{backup,VMs}
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
@@ -94,32 +88,29 @@ sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.co
 sed -i "s/#logind-check-graphical=.*/logind-check-graphical=true/g" /etc/lightdm/lightdm.conf
 
 # Configure QEMU and libvirt
-cat ./Configs/attach.sh >/usr/local/bin/attach.sh
 cat ./Configs/qemu.conf >>/etc/libvirt/qemu.conf
 sed -i -e "s/\user.*/user\ =\ \"""$user""\"/g" /etc/libvirt/qemu.conf
 usermod -a -G libvirt $user
 usermod -a -G input $user
 
 mkdir -p /etc/libvirt/{devices,storage,hooks}
-mkdir /etc/libvirt/storage/autostart
-
-# Devices to pass to the gaming VM
-cat ./Configs/logi_keyb.xml >/etc/libvirt/devices/logi_keyb.xml
-cat ./Configs/logi_mouse.xml >/etc/libvirt/devices/logi_mouse.xml
 
 # Set governor to performance when gaming VM is running to reduce latency
 cat ./Configs/qemu >/etc/libvirt/hooks/qemu
 chmod +x /etc/libvirt/hooks/qemu
 
 # Storage options for virt-manager
-cat ./Configs/default.xml >/etc/libvirt/storage/default.xml
 cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
-ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/default.xml
+cat ./Configs/Virtio.xml >/etc/libvirt/storage/MacOS.xml
+cat ./Configs/Virtio.xml >/etc/libvirt/storage/Windows.xml
 ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
+ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/MacOS.xml
+ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/Windows.xml
 
 # VM configs
-cat ./Configs/default.xml >/etc/libvirt/qemu/win10-gaming.xml
-cat ./Configs/default.xml >/etc/libvirt/qemu/win10-work.xml
+cat ./Configs/macos-high-sierra.xml >/etc/libvirt/qemu/macos-high-sierra.xml
+cat ./Configs/win-gaming.xml >/etc/libvirt/qemu/win-gaming.xml
+cat ./Configs/win-work.xml >/etc/libvirt/qemu/win-work.xml
 
 # Create SSL keys for Spice
 ( mkdir /etc/pki
@@ -143,7 +134,7 @@ sed -i -e "\
   s/\$ipaddress/""$ipaddress""/g; \
   s/\$dns/""$dns""/g; \
   s/\$gateway/""$gateway""/g" \
-/etc/NetworkManager/system-connections/Bridge\ Master.nmconnection
+/etc/NetworkManager/system-connections/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection
 
 cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 enet=$(ls /sys/class/net/ | grep "^en")
@@ -159,10 +150,6 @@ cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
 mkdir -p /home/"$user"/.config/autostart
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
-# Enable VNC
-vnclicense -add "$vnclicense"
-vncinitconfig -service-daemon
-
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
 read -n 1 -s -r -p "Switch to another TTY and complete the backup script variables. Press any key to continue..."
@@ -175,8 +162,10 @@ sed -i 's/    #{ path = "pactl"        args = "load-module module-switch-on-conn
 /etc/pipewire/pipewire-pulse.conf
 sed -i '/    { path = "pactl"        args = "load-module module-switch-on-connect" }/a\    { path = "pactl"        args = "load-module module-combine-sink" }' \
 /etc/pipewire/pipewire-pulse.conf
-pactl set-default-sink combined
-pactl set-default-source combined
+
+mkdir -p /home/"$user"/.local/state/wireplumber
+cat ./Configs/default-nodes >/home/"$user"/.local/state/wireplumber/default-nodes
+usermod -a -G realtime $user
 
 # Add scream listener to autostart
 cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
@@ -198,6 +187,7 @@ chmod +x -R \
   /usr/local/bin/*
 chown -R "$user":"$user" \
   /home/"$user"/.config/autostart
+  /home/"$user"/.local/state/wireplumber/default-nodes
 
 # Disable initial networking services
 systemctl disable systemd-networkd \
@@ -215,6 +205,7 @@ systemctl enable avahi-daemon \
                  liquidctl \
                  NetworkManager \
                  openrgb \
+                 systemd-timesyncd \
                  virtlogd.socket \
                  vncserver-x11-serviced
 
