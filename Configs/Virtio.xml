@@ -7,13 +7,18 @@ or other application using the libvirt API.
 
 <pool type='dir'>
   <name>Virtio</name>
-  <uuid>f083a53f-3c81-47d1-af54-d34ffbe604d0</uuid>
+  <uuid>54492d0d-2d9e-46a5-b274-3298aec68c6e</uuid>
   <capacity unit='bytes'>0</capacity>
   <allocation unit='bytes'>0</allocation>
   <available unit='bytes'>0</available>
   <source>
   </source>
   <target>
-    <path>/usr/share/virtio</path>
+    <path>/var/lib/libvirt/images</path>
+    <permissions>
+      <mode>0755</mode>
+      <owner>0</owner>
+      <group>0</group>
+    </permissions>
   </target>
 </pool>
