@@ -17,11 +17,11 @@ pacman -S --noconfirm \
   ffmpegthumbnailer file-roller firefox \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
   haveged helvum \
-  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
-  mesa mesa-vdpau \
+  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  mesa mesa-utils mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pipewire pipewire-alsa pipewire-pulse \
-  raw-thumbnailer reflector rsync retroarch retroarch-assets-xmb \
+  reflector rsync retroarch retroarch-assets-xmb \
   shairplay sshfs \
   ttf-liberation \
   unrar unzip \
@@ -29,6 +29,10 @@ pacman -S --noconfirm \
   wireplumber \
   xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
+
+pacman -S lib32-fontconfig lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-systemd lib32-vulkan-radeon steam --noconfirm
+sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
+locale-gen
 
 # Set depth to 10 bit
 cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
