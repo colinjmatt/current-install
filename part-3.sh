@@ -32,7 +32,7 @@ pacman -S --noconfirm \
   libgsf libopenraw libreoffice-fresh libva-utils libvdpau-va-gl libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
   mesa mesa-vdpau libva-mesa-driver \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
-  p7zip paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf \
+  p7zip paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil \
   qemu \
   reflector rsync \
   sane seahorse shairplay slock speedtest-cli sshfs swtpm sysstat \
