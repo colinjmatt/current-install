@@ -15,7 +15,7 @@ pacman -S --noconfirm \
   blueman bluez bluez-utils \
   ccache \
   ffmpegthumbnailer file-roller firefox \
-  gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs \
+  gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-utils mesa-vdpau \
@@ -92,7 +92,7 @@ mkdir -p /home/"$user"/.config/autostart
 cat ./HTPCConfigs/Synergy.desktop >/home/"$user"/.config/autostart/Synergy.desktop
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
-chown "$user":"$user" /home/"$user"/.config/autostart/*
+chown -R "$user":"$user" /home/"$user"/.config/autostart
 
 sed -i -e "s/\$machine/""$machine""/g" \
   /home/"$user"/.config/autostart/RPi-play.desktop \
