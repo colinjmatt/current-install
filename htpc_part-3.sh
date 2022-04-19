@@ -1,5 +1,5 @@
 #!/bin/bash
-user="" # Name of main user
+user="user" # Name of main user
 auruser="auruser" # Name of user that yay (AUR) will be used for
 machine="machine" # Friendly computer name for airplay stuff
 domain="local.domain" # Domain this machine will run on
@@ -30,6 +30,10 @@ pacman -S --noconfirm \
   xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
+# Steam
+echo "[multilib]" >>/etc/pacman.conf
+echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
+pacman -Syu --noconfirm
 pacman -S lib32-fontconfig lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-systemd lib32-vulkan-radeon steam --noconfirm
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
@@ -95,9 +99,9 @@ sed -i -e "s/\$machine/""$machine""/g" \
   /home/"$user"/.config/autostart/Shairplay.desktop
 
 sed -i " \
-  s/\$synergyserver/""$synergyserver""/g \
-  s/\$machine/""$machine""/g \
-  s/\$domain/""$domain""/g \
+  s/\$synergyserver/""$synergyserver""/g; \
+  s/\$machine/""$machine""/g; \
+  s/\$domain/""$domain""/g; \
   s/\$user/""$user""/g" \
 /home/"$user"/.config/autostart/Synergy.desktop
 
@@ -114,6 +118,7 @@ systemctl enable aacs.timer \
                  fstrim.timer \
                  haveged \
                  lightdm \
+                 systemd-timesyncd \
                  vncserver-x11-serviced
 
 reboot
