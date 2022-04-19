@@ -73,6 +73,7 @@ sed -i -e " \
   s/HOOKS=.*/HOOKS=(base systemd fsck autodetect modconf block filesystems keyboard)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
+sed -i -e "s/PRESETS=.*/PRESETS=(\'default\')/g" /etc/mkinitcpio.d/linux.preset
 mkinitcpio -P
 
 # Setup bootloader
