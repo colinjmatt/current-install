@@ -39,8 +39,8 @@ sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
 # Set depth to 10 bit
-cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
-sed -i -e "s/\$display/HDMI-A-2/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
+#cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
+#sed -i -e "s/\$display/HDMI-A-2/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
 
 # Configure reflector
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
