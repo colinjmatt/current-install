@@ -79,7 +79,7 @@ mkinitcpio -P
 # Setup bootloader
 bootctl install
 mkdir -p /etc/pacman.d/hooks
-cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
+cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./HTPCConfigs/arch.conf >/boot/loader/entries/arch.conf
 
