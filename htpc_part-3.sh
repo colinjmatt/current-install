@@ -38,10 +38,6 @@ pacman -S lib32-fontconfig lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-sy
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
-# Set depth to 10 bit
-#cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
-#sed -i -e "s/\$display/HDMI-A-2/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
-
 # Configure reflector
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
 
@@ -59,6 +55,7 @@ cd /tmp/paru-bin || return
 su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   google-chrome \
+  moonlight-qt-bin \
   p7zip-gui parsec-bin \
   realvnc-vnc-server rpiplay \
   synergy1-bin' )
