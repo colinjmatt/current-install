@@ -45,13 +45,11 @@ echo "$sshuser ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virs
 chmod 0400 /etc/sudoers.d/"$sshuser"
 
 # Config for vfio reservation, blacklist nVidia driver and suppress msrs messages
-echo "options vfio-pci ids=10de:1b06,10de:10ef" >/etc/modprobe.d/vfio.conf
-echo "blacklist nouveau" >/etc/modprobe.d/blacklist.conf
 echo "options kvm report_ignored_msrs=0" >/etc/modprobe.d/kvm.conf
 
 # Add modules and hooks to mkinitcpio and generate
 sed -i -e " \
-  s/MODULES=.*/MODULES=(nls_cp437 vfat vfio_pci vfio vfio_iommu_type1 vfio_virqfd i915)/g; \
+  s/MODULES=.*/MODULES=(nls_cp437 vfat nvidia vfio_pci vfio vfio_iommu_type1 vfio_virqfd)/g; \
   s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
@@ -61,7 +59,8 @@ mkinitcpio -P
 # Setup bootloader
 bootctl install
 mkdir -p /etc/pacman.d/hooks
-cat ./Configs/100-systemd-boot.hook >/etc/pacman.d/hooks/100-systemd-boot.hook
+cat ./Configs/nvidia.hook >/etc/pacman.d/hooks/nvidia.hook
+cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
 
