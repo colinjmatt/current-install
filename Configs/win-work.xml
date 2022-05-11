@@ -18,10 +18,10 @@ or other application using the libvirt API.
   <currentMemory unit='KiB'>8388608</currentMemory>
   <vcpu placement='static'>4</vcpu>
   <cputune>
-    <vcpupin vcpu='0' cpuset='0'/>
-    <vcpupin vcpu='1' cpuset='1'/>
-    <vcpupin vcpu='2' cpuset='6'/>
-    <vcpupin vcpu='3' cpuset='7'/>
+    <vcpupin vcpu='0' cpuset='14'/>
+    <vcpupin vcpu='1' cpuset='30'/>
+    <vcpupin vcpu='2' cpuset='15'/>
+    <vcpupin vcpu='3' cpuset='31'/>
   </cputune>
   <os>
     <type arch='x86_64' machine='pc-q35-6.1'>hvm</type>
@@ -32,7 +32,7 @@ or other application using the libvirt API.
   <features>
     <acpi/>
     <apic/>
-    <hyperv>
+    <hyperv mode='custom'>
       <relaxed state='on'/>
       <vapic state='on'/>
       <spinlocks state='on' retries='8191'/>
