@@ -25,27 +25,25 @@ pacman -S --noconfirm \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf epdfview exfat-utils \
-  ffmpegthumbnailer file-roller firefox firewalld \
+  ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld \
   gnome-disk-utility gnome-icon-theme-extras gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
-  i2c-tools i7z iasl intel-media-driver \
-  libgsf libopenraw libreoffice-fresh libva-utils libvdpau-va-gl libxcrypt-compat libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
-  mesa mesa-vdpau libva-mesa-driver \
+  i2c-tools \
+  libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
+  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
+  mesa mesa-vdpau  \
+  nvidia nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   p7zip paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil \
-  qemu \
+  qemu-desktop \
   reflector rsync \
   sane seahorse shairplay slock speedtest-cli sshfs swtpm sysstat \
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
-  virt-manager vulkan-intel \
+  virt-manager \
   wireplumber \
-  xdg-utils xf86-video-intel xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
-
-# Set depth to 10 bit (current panel is 8 bit)
-# cat ./Configs/10-bitdepth.conf >/etc/X11/xorg.conf.d/10-bitdepth.conf
-# sed -i -e "s/\$display/DP1/g" /etc/X11/xorg.conf.d/10-bitdepth.conf
 
 # Configure reflector
 cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
@@ -56,7 +54,7 @@ localectl set-x11-keymap gb
 # Optimise AUR compiles
 sed -i -e "\
   s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g; \
-  s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j13\"/g" \
+  s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j33\"/g" \
 /etc/makepkg.conf
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
@@ -68,11 +66,10 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   gnome-icon-theme google-chrome \
   i2c-nct6775-dkms \
-  mugshot \
+  moonlight-qt-bin mugshot \
   openrgb-bin \
   p7zip-gui parsec-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
-  scream \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse-git')
@@ -95,14 +92,17 @@ usermod -a -G input $user
 
 mkdir -p /etc/libvirt/{devices,storage,hooks}
 
-# Set governor to performance when gaming VM is running to reduce latency
-cat ./Configs/qemu >/etc/libvirt/hooks/qemu
-chmod +x /etc/libvirt/hooks/qemu
+# CPU set to performance and GPU preparation via hooks
+mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/
+mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/release/end/
+cat ./Configs/start.sh >/etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/start.sh
+cat ./Configs/end.sh >/etc/libvirt/hooks/qemu.d/win-gaming/release/end/end.sh
+chmod -R +x /etc/libvirt/hooks/
 
 # Storage options for virt-manager
 cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
-cat ./Configs/Virtio.xml >/etc/libvirt/storage/MacOS.xml
-cat ./Configs/Virtio.xml >/etc/libvirt/storage/Windows.xml
+cat ./Configs/MacOS.xml >/etc/libvirt/storage/MacOS.xml
+cat ./Configs/Windows.xml >/etc/libvirt/storage/Windows.xml
 ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
 ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/MacOS.xml
 ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/Windows.xml
@@ -141,14 +141,14 @@ enet=$(ls /sys/class/net/ | grep "^en")
 sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 
 # RGB stuff
+mkdir -p /home/"$user"/.config/autostart
+
 cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
 cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
+cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 cat ./Configs/liquidctl.service >/etc/systemd/system/liquidctl.service
 cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
-
-mkdir -p /home/"$user"/.config/autostart
-cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
@@ -157,18 +157,14 @@ cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Configure pipewire to output to all devices
+cp /usr/share/pipewire/pipewire.conf /etc/pipewire/
 cp /usr/share/pipewire/pipewire-pulse.conf /etc/pipewire/
-sed -i 's/    #{ path = "pactl"        args = "load-module module-switch-on-connect" }/    { path = "pactl"        args = "load-module module-switch-on-connect" }/g' \
-/etc/pipewire/pipewire-pulse.conf
-sed -i '/    { path = "pactl"        args = "load-module module-switch-on-connect" }/a\    { path = "pactl"        args = "load-module module-combine-sink" }' \
+sed -i '/    { path = "pactl"        args = "load-module module-always-sink" }/a\    { path = "pactl"        args = "load-module module-combine-sink" }' \
 /etc/pipewire/pipewire-pulse.conf
 
 mkdir -p /home/"$user"/.local/state/wireplumber
 cat ./Configs/default-nodes >/home/"$user"/.local/state/wireplumber/default-nodes
 usermod -a -G realtime $user
-
-# Add scream listener to autostart
-cat ./Configs/PulseAudio\ Scream\ Listener.desktop >/home/"$user"/.config/autostart/PulseAudio\ Scream\ Listener.desktop
 
 # Shairplay & RPi-play
 mkdir -p /home/"$user"/.config/autostart
