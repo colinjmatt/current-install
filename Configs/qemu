@@ -1,12 +1,21 @@
 #!/bin/bash
-if [[ $1 == "win-10" ]] && [[ $2 == "start" ]] || [[ $2 == "stopped" ]]
-then
-  do_action="cpupower frequency-set -g performance"
-  if [[ $2 == "stopped" ]]
-  then
-    do_action="cpupower frequency-set -g powersave"
-  fi
+GUEST_NAME="$1"
+HOOK_NAME="$2"
+STATE_NAME="$3"
+MISC="${@:4}"
 
-  set -o pipefail
-  $do_action
+BASEDIR="$(dirname $0)"
+
+HOOKPATH="$BASEDIR/qemu.d/$GUEST_NAME/$HOOK_NAME/$STATE_NAME"
+
+set -e
+
+if [ -f "$HOOKPATH" ] && [ -s "$HOOKPATH"] && [ -x "$HOOKPATH" ]; then
+    eval \"$HOOKPATH\" "$@"
+elif [ -d "$HOOKPATH" ]; then
+    while read file; do
+        if [ ! -z "$file" ]; then
+          eval \"$file\" "$@"
+        fi
+    done <<< "$(find -L "$HOOKPATH" -maxdepth 1 -type f -executable -print;)"
 fi
