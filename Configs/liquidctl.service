@@ -4,6 +4,8 @@ Description=Liquidctl Configuration
 [Service]
 Type=simple
 ExecStart=/bin/bash /usr/local/bin/liquidctl.sh
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=default.target
