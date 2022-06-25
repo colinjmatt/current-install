@@ -68,7 +68,7 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   moonlight-qt-bin mugshot \
   openrgb-bin \
-  p7zip-gui parsec-bin \
+  p7zip-gui \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
@@ -140,9 +140,10 @@ cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections
 enet=$(ls /sys/class/net/ | grep "^en")
 sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 
-# RGB stuff
+# Create autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
 
+# RGB stuff
 cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
 cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
@@ -166,8 +167,10 @@ mkdir -p /home/"$user"/.local/state/wireplumber
 cat ./Configs/default-nodes >/home/"$user"/.local/state/wireplumber/default-nodes
 usermod -a -G realtime $user
 
+cat ./Configs/pactl-combined.desktop >/home/"$user"/.config/autostart/pactl-combined.desktop
+cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
+
 # Shairplay & RPi-play
-mkdir -p /home/"$user"/.config/autostart
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
