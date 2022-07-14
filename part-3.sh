@@ -30,7 +30,7 @@ pacman -S --noconfirm \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
-  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings liquidctl \
+  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau  \
   nvidia nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
@@ -158,15 +158,7 @@ cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Configure pipewire to output to all devices
-cp /usr/share/pipewire/pipewire.conf /etc/pipewire/
-cp /usr/share/pipewire/pipewire-pulse.conf /etc/pipewire/
-sed -i '/    { path = "pactl"        args = "load-module module-always-sink" }/a\    { path = "pactl"        args = "load-module module-combine-sink" }' \
-/etc/pipewire/pipewire-pulse.conf
-
-mkdir -p /home/"$user"/.local/state/wireplumber
-cat ./Configs/default-nodes >/home/"$user"/.local/state/wireplumber/default-nodes
 usermod -a -G realtime $user
-
 cat ./Configs/pactl-combined.desktop >/home/"$user"/.config/autostart/pactl-combined.desktop
 cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
 
