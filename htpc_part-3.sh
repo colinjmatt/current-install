@@ -14,7 +14,7 @@ pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils \
   blueman bluez bluez-utils \
   ccache \
-  ffmpegthumbnailer file-roller firefox \
+  ffmpegthumbnailer file-roller firefox fuse2 \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
@@ -34,7 +34,7 @@ pacman -S --noconfirm \
 echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Syu --noconfirm
-pacman -S lib32-fontconfig lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-systemd lib32-vulkan-radeon steam --noconfirm
+pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-systemd lib32-vulkan-radeon steam --noconfirm
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
