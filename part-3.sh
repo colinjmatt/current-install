@@ -25,7 +25,7 @@ pacman -S --noconfirm \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf epdfview exfat-utils \
-  ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld \
+  ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld fuse2 \
   gnome-disk-utility gnome-icon-theme-extras gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
@@ -73,6 +73,14 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse-git')
+
+# Steam
+echo "[multilib]" >>/etc/pacman.conf
+echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
+pacman -Syu --noconfirm
+pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
+sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
+locale-gen
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
