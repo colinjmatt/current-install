@@ -204,6 +204,7 @@ systemctl enable avahi-daemon \
                  liquidctl \
                  NetworkManager \
                  openrgb \
+                 systemd-oomd \
                  systemd-timesyncd \
                  virtlogd.socket \
                  vncserver-x11-serviced
