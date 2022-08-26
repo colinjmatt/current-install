@@ -115,6 +115,7 @@ systemctl enable aacs.timer \
                  fstrim.timer \
                  haveged \
                  lightdm \
+                 systemd-oomd \
                  systemd-timesyncd \
                  vncserver-x11-serviced
 
