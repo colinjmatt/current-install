@@ -12,16 +12,18 @@ echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 # All currently required software in official repos
 pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils \
-  blueman bluez bluez-utils \
+  barrier blueman bluez bluez-utils \
   ccache \
   ffmpegthumbnailer file-roller firefox fuse2 \
   gnome-keyring gst-libav gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum \
-  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libretro \
+  libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
+  libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-utils mesa-vdpau \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pipewire pipewire-alsa pipewire-pulse \
-  reflector rsync retroarch retroarch-assets-xmb \
+  reflector rsync \
   shairplay sshfs \
   ttf-liberation \
   unrar unzip \
@@ -57,8 +59,7 @@ su $auruser -P -c 'makepkg -si --noconfirm; \
   google-chrome \
   moonlight-qt-bin \
   p7zip-gui parsec-bin \
-  realvnc-vnc-server rpiplay \
-  synergy1-bin' )
+  realvnc-vnc-server rpiplay' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
@@ -83,6 +84,13 @@ chmod +x /usr/local/bin/aacs.sh
 mkdir -p /etc/wireplumber/main.lua.d/
 cp /usr/share/wireplumber/main.lua.d/50-alsa-config.lua /etc/wireplumber/main.lua.d/
 sed -i -e "s/--\[\"session.suspend-timeout-seconds\"\].*/\[\"session.suspend-timeout-seconds\"\]\ =\ 0,/g" /etc/wireplumber/main.lua.d/50-alsa-config.lua
+
+# Configure Barrier (only needed if no SSL certs are preset on the server already)
+mkdir -p ~/.local/share/barrier/SSL/Fingerprints
+openssl req -x509 -nodes -days 36500 -subj /CN=Barrier -newkey rsa:4096 -keyout ~/.local/share/barrier/SSL/Barrier.pem -out ~/.local/share/barrier/SSL/Barrier.pem
+fingerprint=$(openssl x509 -fingerprint -sha256 -noout -in ~/.local/share/barrier/SSL/Barrier.pem | cut -d"=" -f2)
+echo "v2:sha256:$fingerprint" > ~/.local/share/barrier/SSL/Fingerprints/TrustedServers.txt
+
 
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
