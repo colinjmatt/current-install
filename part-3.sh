@@ -65,10 +65,11 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
   gnome-icon-theme google-chrome \
+  heroic-games-launcher-bin \
   i2c-nct6775-dkms \
-  moonlight-qt-bin mugshot \
+  mugshot \
   openrgb-bin \
-  p7zip-gui \
+  p7zip-gui proton-ge-custom-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
