@@ -62,7 +62,7 @@ passwd "$user"
 gpasswd -a "$user" autologin
 
 groupadd "$yayuser"
-useradd -m -g "$yayuser" -G users,wheel,storage,power,audio "$yayuser"
+useradd -m -g "$yayuser" -G users,wheel,storage,power,audio,games "$yayuser"
 passwd "$yayuser"
 echo "$yayuser ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virsh, NOPASSWD: /usr/bin/shutdown, NOPASSWD: /usr/bin/reboot" > /etc/sudoers.d/"$yayuser"
 chmod 0400 /etc/sudoers.d/"$yayuser"
