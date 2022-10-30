@@ -38,7 +38,7 @@ cat ./Configs/nanorc > /etc/nanorc
 passwd root
 groupadd -r autologin
 groupadd "$user"
-useradd -m -g "$user" -G users,wheel,storage,power,audio,autologin "$user"
+useradd -m -g "$user" -G users,wheel,storage,power,audio,games,autologin "$user"
 passwd "$user"
 gpasswd -a "$user" autologin
 echo "$sshuser ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virsh, NOPASSWD: /usr/bin/shutdown, NOPASSWD: /usr/bin/reboot" > /etc/sudoers.d/"$sshuser"
