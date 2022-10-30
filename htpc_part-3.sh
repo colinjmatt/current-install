@@ -58,7 +58,7 @@ su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   google-chrome \
   moonlight-qt-bin \
-  p7zip-gui parsec-bin \
+  p7zip-gui \
   realvnc-vnc-server rpiplay' )
 
 # Set user to autologin
