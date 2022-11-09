@@ -56,7 +56,6 @@ su $auruser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru-bin || return
 su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
-  google-chrome \
   moonlight-qt-bin \
   p7zip-gui \
   realvnc-vnc-server rpiplay' )
