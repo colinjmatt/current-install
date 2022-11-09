@@ -30,7 +30,7 @@ pacman -S --noconfirm \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
-  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
+  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings lutris \
   mesa mesa-vdpau  \
   nvidia nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
@@ -64,12 +64,12 @@ cd /tmp/paru-bin || return
 su $yayuser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
-  gnome-icon-theme google-chrome \
+  gnome-icon-theme \
   heroic-games-launcher-bin \
   i2c-nct6775-dkms \
   mugshot \
   openrgb-bin \
-  p7zip-gui proton-ge-custom-bin \
+  p7zip-gui proton-ge-custom-bin protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
