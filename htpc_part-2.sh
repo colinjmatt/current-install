@@ -36,6 +36,7 @@ for server in $dns; do
   echo "nameserver $server" >> /etc/resolv.conf
   echo "DNS=$server" >> /etc/systemd/network/10-ethernet-static.network
 done
+echo "DNS=$dns" >> /etc/systemd/resolved.conf
 
 # Set hostname
 hostnamectl set-hostname "$hostname"
