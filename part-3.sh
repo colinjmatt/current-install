@@ -1,6 +1,7 @@
 #!/bin/bash
 user="user" # single user only
 yayuser=""
+hostname="hostname"
 machine="machine" # Friendly computer name for airplay stuff
 domain="x.local"
 ipaddress="192.168.1.x"
@@ -10,18 +11,23 @@ printerip="192.168.1.120"
 
 dns2="${dns//;}"
 
+localectl set-keymap uk
+timedatectl set-ntp true
+hostnamectl set-hostname "$hostname"
+
 # Add DNS server(s)
 for server in $dns2; do
   echo "nameserver $server" >> /etc/resolv.conf
 done
+echo "DNS=$dns2" >> /etc/systemd/resolved.conf
 
 # Arch key servers are bad
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
 pacman -S --noconfirm \
-  accountsservice alsa-plugins alsa-utils audacity \
-  bashtop blueman bluez bluez-utils bridge-utils \
+  accountsservice alsa-plugins alsa-utils \
+  blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf epdfview exfat-utils \
@@ -32,7 +38,7 @@ pacman -S --noconfirm \
   libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
   libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings lutris \
   mesa mesa-vdpau  \
-  nvidia nvidia-settings nvidia-utils \
+  nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   p7zip paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil \
   qemu-desktop \
@@ -69,7 +75,7 @@ su $yayuser -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   mugshot \
   openrgb-bin \
-  p7zip-gui proton-ge-custom-bin protonup-qt-bin \
+  p7zip-gui protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
@@ -80,6 +86,7 @@ echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Syu --noconfirm
 pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
+su $yayuser -P -c 'paru -S --noconfirm proton-ge-custom-bin'
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
@@ -113,8 +120,8 @@ cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
 cat ./Configs/MacOS.xml >/etc/libvirt/storage/MacOS.xml
 cat ./Configs/Windows.xml >/etc/libvirt/storage/Windows.xml
 ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
-ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/MacOS.xml
-ln -s /etc/libvirt/storage/default.xml /etc/libvirt/storage/autostart/Windows.xml
+ln -s /etc/libvirt/storage/MacOS.xml /etc/libvirt/storage/autostart/MacOS.xml
+ln -s /etc/libvirt/storage/Windows.xml /etc/libvirt/storage/autostart/Windows.xml
 
 # VM configs
 cat ./Configs/macos-high-sierra.xml >/etc/libvirt/qemu/macos-high-sierra.xml
@@ -146,7 +153,7 @@ sed -i -e "\
 /etc/NetworkManager/system-connections/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection
 
 cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
-enet=$(ls /sys/class/net/ | grep "^en")
+enet="$(ip -o link | grep "state UP" | awk -F': ' '{print $2}')"
 sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
 
 # Create autostart directory if it doesn't exist
@@ -157,9 +164,6 @@ cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
 cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
-cat ./Configs/liquidctl.service >/etc/systemd/system/liquidctl.service
-cat ./Configs/liquidctl.sh >/usr/local/bin/liquidctl.sh
-
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
 read -n 1 -s -r -p "Switch to another TTY and complete the backup script variables. Press any key to continue..."
@@ -167,7 +171,6 @@ cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Configure pipewire to output to all devices
-usermod -a -G realtime $user
 cat ./Configs/pactl-combined.desktop >/home/"$user"/.config/autostart/pactl-combined.desktop
 cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
 
@@ -202,7 +205,6 @@ systemctl enable avahi-daemon \
                  haveged \
                  libvirtd \
                  lightdm \
-                 liquidctl \
                  NetworkManager \
                  openrgb \
                  systemd-oomd \
