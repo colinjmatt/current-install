@@ -65,9 +65,9 @@ sed -i -e "\
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su $yayuser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
+su "$yayuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru-bin || return
-su $yayuser -P -c 'makepkg -si --noconfirm; \
+su "$yayuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
   gnome-icon-theme \
@@ -86,7 +86,7 @@ echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Syu --noconfirm
 pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
-su $yayuser -P -c 'paru -S --noconfirm proton-ge-custom-bin'
+su "$yayuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin'
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
