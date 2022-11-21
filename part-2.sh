@@ -11,16 +11,13 @@ locale-gen
 
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 echo "KEYMAP=uk" > /etc/vconsole.conf
-localectl set-keymap uk
-
-timedatectl set-ntp true
 
 # Create dhcp ethernet connection
 cat ./Configs/20-ethernet-dhcp.network >/etc/systemd/network/20-ethernet-dhcp.network
-sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/systemd/network/20-ethernet-dhcp.network
+interface="$(ip -o link | grep "state UP" | awk -F': ' '{print $2}')"
+sed -i -e "s/\$interface/""$interface""/g" /etc/systemd/network/20-ethernet-dhcp.network
 
 # Set hostname
-hostnamectl set-hostname "$hostname"
 echo "$hostname" > /etc/hostname
 echo "127.0.0.1 localhost.localdomain localhost $hostname" > /etc/hosts
 
@@ -64,7 +61,7 @@ cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
 
-encryptuuid=$(blkid | grep crypto_LUKS | grep 1n1p2 | awk -F '"' '{print $2}')
+encryptuuid=$(blkid | grep crypto_LUKS | grep 0n1p2 | awk -F '"' '{print $2}')
 sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch*.conf
 
 # Configure quiet boot
