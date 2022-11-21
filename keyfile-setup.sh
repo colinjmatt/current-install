@@ -18,29 +18,30 @@ if [[ -z "$encrypteddrive" ]]; then
     read -r CRYPT < /dev/tty
 fi
 
-sudo pacman -S --noconfirm dosfstools parted
+pacman -S --noconfirm dosfstools parted
 
-sudo mkdir -p /mnt/usbkey
-sudo parted -s /dev/"$keydrive" mklabel gpt
-sudo parted -s /dev/"$keydrive" mkpart FAT32
-sudo mkfs.vfat -I /dev/"$keydrive"
-sudo mount /dev/"$keydrive" /mnt/usbkey
+mkdir -p /mnt/usbkey
+parted -s /dev/"$keydrive" mklabel gpt
+parted -s /dev/"$keydrive" mkpart FAT32
+mkfs.vfat -I /dev/"$keydrive"
+mount /dev/"$keydrive" /mnt/usbkey
 
 keydriveUUID=$(blkid /dev/""$keydrive"" -o value | head -n1)
-sudo dd bs=1024 count=4 if=/dev/urandom of=/mnt/usbkey/crypt.key iflag=fullblock
+dd bs=1024 count=4 if=/dev/urandom of=/mnt/usbkey/crypt.key iflag=fullblock
 
 clear
 echo "Encrypted volume password entry"
 echo "========================================================================="
 echo ""
-sudo cryptsetup luksAddKey /dev/"$encrypteddrive" /mnt/usbkey/crypt.key --key-slot 1
+cryptsetup luksAddKey /dev/"$encrypteddrive" /mnt/usbkey/crypt.key --key-slot 1
 
-sudo sed -i -e "s/MODULES=\"/MODULES=\"nls_cp437 vfat\ /g" /etc/mkinitcpio.conf
-mkinitcpio -P
+# Only needed if the setup in this repo hasn't been used
+# sed -i -e "s/MODULES=\"/MODULES=\"nls_cp437 vfat\ /g" /etc/mkinitcpio.conf
+# mkinitcpio -P
 
-sudo sed -i -e "s/options\ /options\ cryptkey=UUID=""$keydriveUUID"":vfat:\/crypt.key\ /g" /boot/loader/entries/*.conf
+sed -i -e "s/options\ /options\ cryptkey=UUID=""$keydriveUUID"":vfat:\/crypt.key\ /g" /boot/loader/entries/*.conf
 
-sudo umount /mnt/usbkey
-sudo rm -rf /mnt/usbkey
+umount /mnt/usbkey
+rm -rf /mnt/usbkey
 clear
 echo "USB encryption keyfile setup!"
