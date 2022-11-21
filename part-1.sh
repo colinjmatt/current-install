@@ -17,7 +17,7 @@ parted -s /dev/nvme0n1 mkpart primary ext4 512MiB 100%
 mkfs.vfat -F32 /dev/nvme0n1p1
 
 cryptsetup luksFormat /dev/nvme0n1p2
-cryptsetup luksOpen /dev/nvme0n1p2 nvme1n1p2-crypt
+cryptsetup luksOpen /dev/nvme0n1p2 nvme0n1p2-crypt
 
 pvcreate /dev/mapper/nvme0n1p2-crypt
 vgcreate vg0 /dev/mapper/nvme0n1p2-crypt
@@ -33,11 +33,13 @@ mkdir /mnt/boot
 mount /dev/nvme0n1p1 /mnt/boot
 swapon /dev/mapper/vg0-swap
 
-# Install base system
-pacstrap /mnt base base-devel amd-ucode linux linux-firmware lvm2 systemd-resolvconf openssh wget nano git
+# Install system
+pacstrap /mnt base base-devel amd-ucode linux linux-firmware linux-headers lvm2 nvidia systemd-resolvconf openssh wget nano git
 
-mkdir /mnt/mnt/VMs
+mkdir /mnt/mnt/{Games,VMs}
+mount /dev/nvme1n1p1 /mnt/mnt/Games
 mount /dev/mapper/vg0-vms /mnt/mnt/VMs
+
 
 # Generate fstab for filesystem mounts and add /tmp as ram drive
 genfstab -pU /mnt >>/mnt/etc/fstab
