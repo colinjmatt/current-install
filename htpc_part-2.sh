@@ -19,7 +19,8 @@ timedatectl set-ntp true
 
 # Create dhcp ethernet connection
 cat ./Configs/20-ethernet-dhcp.network >/etc/systemd/network/20-ethernet-dhcp.network
-sed -i -e "s/\$interface/""$(ls /sys/class/net/ | grep "^en")""/g" /etc/systemd/network/20-ethernet-dhcp.network
+interface="$(ip -o link | grep "state UP" | awk -F': ' '{print $2}')"
+sed -i -e "s/\$interface/""$interface""/g" /etc/systemd/network/20-ethernet-dhcp.network
 
 # Create static ethernet connection
 cat ./HTPCConfigs/10-ethernet-static.network >/etc/systemd/network/10-ethernet-static.network
