@@ -185,6 +185,12 @@ sed -i -e "s/$machine/""$machine""/g" \
 
 cat ./Configs/libao.conf >/etc/libao.conf
 
+# Setup monitors in X11
+mkdir -p /etc/X11/edid
+cp ./Configs/AsusXG32V-edid.txt /etc/X11/edid/
+cp ./Configs/ESR-edid.txt /etc/X11/edid/
+cat ./Configs/xorg.conf >/etc/X11/xorg.conf
+
 # Set permissions
 chmod +x -R \
   /usr/local/bin/*
