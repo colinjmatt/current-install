@@ -1,9 +1,0 @@
-[Unit]
-Description=OpenRGB Pre-start configuration
-
-[Service]
-Type=oneshot
-ExecStart=/bin/bash /usr/local/bin/openrgb.sh
-
-[Install]
-WantedBy=default.target
