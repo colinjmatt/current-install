@@ -72,9 +72,8 @@ su "$yayuser" -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   gnome-icon-theme \
   heroic-games-launcher-bin \
-  i2c-nct6775-dkms \
   mugshot \
-  openrgb-bin \
+  openrgb \
   p7zip-gui protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
@@ -160,8 +159,6 @@ sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ 
 mkdir -p /home/"$user"/.config/autostart
 
 # RGB stuff
-cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
-cat ./Configs/openrgb.service >/etc/systemd/system/openrgb.service
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
 # Enable backups
