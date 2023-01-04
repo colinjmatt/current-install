@@ -56,9 +56,7 @@ su $auruser -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru-bin || return
 su $auruser -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
-  moonlight-qt-bin \
-  p7zip-gui \
-  realvnc-vnc-server rpiplay' )
+  p7zip-gui realvnc-vnc-server rpiplay' )
 
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
@@ -84,12 +82,16 @@ mkdir -p /etc/wireplumber/main.lua.d/
 cp /usr/share/wireplumber/main.lua.d/50-alsa-config.lua /etc/wireplumber/main.lua.d/
 sed -i -e "s/--\[\"session.suspend-timeout-seconds\"\].*/\[\"session.suspend-timeout-seconds\"\]\ =\ 0,/g" /etc/wireplumber/main.lua.d/50-alsa-config.lua
 
+# Configure pipewire to output to all devices
+cat ./Configs/pactl-combined.desktop >/home/"$user"/.config/autostart/pactl-combined.desktop
+cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
+chmod +x /usr/local/bin/pactl-combined.sh
+
 # Configure Barrier (only needed if no SSL certs are preset on the server already)
 mkdir -p ~/.local/share/barrier/SSL/Fingerprints
 openssl req -x509 -nodes -days 36500 -subj /CN=Barrier -newkey rsa:4096 -keyout ~/.local/share/barrier/SSL/Barrier.pem -out ~/.local/share/barrier/SSL/Barrier.pem
 fingerprint=$(openssl x509 -fingerprint -sha256 -noout -in ~/.local/share/barrier/SSL/Barrier.pem | cut -d"=" -f2)
 echo "v2:sha256:$fingerprint" > ~/.local/share/barrier/SSL/Fingerprints/TrustedServers.txt
-
 
 # Set autostarting programs
 mkdir -p /home/"$user"/.config/autostart
