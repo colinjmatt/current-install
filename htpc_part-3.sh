@@ -21,7 +21,7 @@ pacman -S --noconfirm \
   libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
   libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-utils mesa-vdpau \
-  noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
+  network-manager-applet networkmanager noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pipewire pipewire-alsa pipewire-pulse \
   reflector rsync \
   shairplay sshfs \
@@ -117,6 +117,8 @@ cat ./Configs/libao.conf >/etc/libao.conf
 vnclicense -add "$vnclicense"
 vncinitconfig -service-daemon
 
+systemctl disable systemd-networkd
+
 # Enable services
 systemctl enable aacs.timer \
                  avahi-daemon \
@@ -124,6 +126,7 @@ systemctl enable aacs.timer \
                  fstrim.timer \
                  haveged \
                  lightdm \
+                 NetworkManager \
                  systemd-oomd \
                  systemd-timesyncd \
                  vncserver-x11-serviced
