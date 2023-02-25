@@ -48,7 +48,7 @@ pacman -S --noconfirm \
   unrar unzip usbutils \
   virt-manager \
   wireplumber \
-  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  xdg-user-dirs xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
 # Configure reflector
