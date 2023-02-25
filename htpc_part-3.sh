@@ -29,7 +29,7 @@ pacman -S --noconfirm \
   unrar unzip \
   vlc vulkan-radeon \
   wireplumber \
-  xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  xdg-user-dirs xdg-utils xf86-video-amdgpu xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
 # Steam
