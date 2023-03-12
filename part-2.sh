@@ -46,7 +46,7 @@ echo "options kvm report_ignored_msrs=0" >/etc/modprobe.d/kvm.conf
 
 # Add modules and hooks to mkinitcpio and generate
 sed -i -e " \
-  s/MODULES=.*/MODULES=(nls_cp437 ext4 nvidia vfio_pci vfio vfio_iommu_type1 vfio_virqfd)/g; \
+  s/MODULES=.*/MODULES=(nls_cp437 ext4 nvidia vfio_pci vfio vfio_iommu_type1)/g; \
   s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
