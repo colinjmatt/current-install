@@ -80,11 +80,17 @@ su "$yayuser" -P -c 'makepkg -si --noconfirm; \
   virtio-win \
   xfce4-volumed-pulse-git')
 
+# Blacklist nouveau
+cat ./Configs/blacklist-nouveau.conf >/etc/modprobe.d/blacklist-nouveau.conf
+
+# Fix game crashes by increasing memory map count
+cat ./Configs/99-vm-max_map_count.conf >/etc/sysctl.d/99-vm-max_map_count.conf
+
 # Steam
 echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Syu --noconfirm
-pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
+pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
 su "$yayuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin'
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
