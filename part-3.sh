@@ -32,7 +32,7 @@ pacman -S --noconfirm \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf epdfview exfat-utils \
   ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld fuse2 \
-  gnome-disk-utility gnome-icon-theme-extras gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
+  gnome-disk-utility gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
@@ -70,11 +70,11 @@ cd /tmp/paru-bin || return
 su "$yayuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
-  gnome-icon-theme \
   heroic-games-launcher-bin \
   mugshot \
+  numix-circle-icon-theme-git numix-icon-theme-git \
   openrgb \
-  p7zip-gui protonup-qt-bin \
+  p7zip-gui \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
@@ -91,7 +91,7 @@ echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Syu --noconfirm
 pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
-su "$yayuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin'
+su "$yayuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin protonup-qt-bin steamtinkerlaunch && steamtinkerlaunch compat add'
 sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
 locale-gen
 
@@ -174,8 +174,8 @@ cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Configure pipewire to output to all devices
-cat ./Configs/pactl-combined.desktop >/home/"$user"/.config/autostart/pactl-combined.desktop
-cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
+mkdir -p /home/"$user"/.config/pipewire/pipewire-pulse.conf.d
+cat ./Configs/add-combined-sink.conf >/home/"$user"/.config/pipewire/pipewire-pulse.conf.d/add-combined-sink.conf
 
 # Shairplay & RPi-play
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
