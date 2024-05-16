@@ -83,9 +83,6 @@ su "$yayuser" -P -c 'makepkg -si --noconfirm; \
 # Blacklist nouveau
 cat ./Configs/blacklist-nouveau.conf >/etc/modprobe.d/blacklist-nouveau.conf
 
-# Fix game crashes by increasing memory map count
-cat ./Configs/99-vm-max_map_count.conf >/etc/sysctl.d/99-vm-max_map_count.conf
-
 # Steam
 echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
