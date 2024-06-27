@@ -146,8 +146,8 @@ class Arctis7PlusChatMix:
             pipe LR from VAC to default device""", exc_info=True)
             self.die_gracefully(sink_fail=True, trigger="LR links")
         
-        # set the default sink to Arctis Game
-        os.system('pactl set-default-sink Arctis_Game')
+        # set the default sink to Arctis Game (disbled because I don't want this functionality)
+        # os.system('pactl set-default-sink Arctis_Game')
 
     def start_modulator_signal(self):
         """Listen to the USB device for modulator knob's signal 
