@@ -23,6 +23,9 @@ echo "127.0.0.1 localhost.localdomain localhost $hostname" > /etc/hosts
 
 # Configure pacman
 cat ./Configs/pacman.conf >/etc/pacman.conf
+cat ./Configs/paccache.hook >/etc/pacman.d/hooks/paccache.hook
+cat ./Configs/paccache.sh >/usr/local/bin/paccache.sh
+sed -i -e "s/$user/""$user""/g" /usr/local/bin/paccache.sh
 
 # Set .bashrc  and .nanorc for users & root
 cat ./Configs/root_bashrc >/root/.bashrc
