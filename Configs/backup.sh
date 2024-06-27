@@ -25,11 +25,20 @@ if [[ ! -d "$localmount""$directory""$backupname" ]]; then
   mkdir -p "$localmount""$directory""$backupname"
 fi
 
-tar -zc \
-  --exclude='/home/colin/*cache' \
-  --exclude='/home/colin/.config/discord/' \
-  --exclude='/home/colin/.config/OCS-Store' \
-  --exclude='/home/colin/.config/Opendesktop App' \
+tar -zc --verbose \
+  --exclude='/home/$user/.cache' \
+  --exclude='/home/$user/.config/discord' \
+  --exclude='/home/$user/.config/heroic' \
+  --exclude='/home/$user/.config/legendary' \
+  --exclude='/home/$user/.config/lutris' \
+  --exclude='/home/$user/.config/unity3d' \
+  --exclude='/home/$user/.config/steamtinkerlaunch' \
+  --exclude='/home/$user/.local/share/lutris' \
+  --exclude='/home/$user/.local/share/Steam' \
+  --exclude='/home/$user/.mozilla' \
+  --exclude='/home/$user/.steam' \
+  --exclude='/home/$user/.wine' \
+  --exclude='/home/$user/Games' \
   /home \
   /root \
   /etc \
