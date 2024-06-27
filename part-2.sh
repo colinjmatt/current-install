@@ -3,6 +3,10 @@ hostname="hostname"
 user="user"
 sshuser="sshuser"
 
+hostname="spledik"
+user="colin"
+sshuser="colin"
+
 # Set region, locale and time synchronisation
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
@@ -21,12 +25,6 @@ sed -i -e "s/\$interface/""$interface""/g" /etc/systemd/network/20-ethernet-dhcp
 echo "$hostname" > /etc/hostname
 echo "127.0.0.1 localhost.localdomain localhost $hostname" > /etc/hosts
 
-# Configure pacman
-cat ./Configs/pacman.conf >/etc/pacman.conf
-cat ./Configs/paccache.hook >/etc/pacman.d/hooks/paccache.hook
-cat ./Configs/paccache.sh >/usr/local/bin/paccache.sh
-sed -i -e "s/$user/""$user""/g" /usr/local/bin/paccache.sh
-
 # Set .bashrc  and .nanorc for users & root
 cat ./Configs/root_bashrc >/root/.bashrc
 cat ./Configs/user_bashrc >/etc/skel/.bashrc
@@ -44,21 +42,29 @@ gpasswd -a "$user" autologin
 echo "$sshuser ALL=(ALL) ALL, NOPASSWD: /usr/bin/pacman, NOPASSWD: /usr/bin/virsh, NOPASSWD: /usr/bin/shutdown, NOPASSWD: /usr/bin/reboot" > /etc/sudoers.d/"$sshuser"
 chmod 0400 /etc/sudoers.d/"$sshuser"
 
-# Config for vfio reservation, blacklist nVidia driver and suppress msrs messages
+# Suppress msrs messages
 echo "options kvm report_ignored_msrs=0" >/etc/modprobe.d/kvm.conf
 
 # Add modules and hooks to mkinitcpio and generate
+# FOR READING FAT ON ENCYPTION KEY, 'nls_cp437' must be added first to [MODULES]
+# FOR ENCRYPTION, 'encrypt' and 'lvm2' must be added between 'block' and 'filesystems' in [HOOKS]
 sed -i -e " \
-  s/MODULES=.*/MODULES=(nls_cp437 ext4 nvidia vfio_pci vfio vfio_iommu_type1)/g; \
-  s/HOOKS=.*/HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems keyboard)/g; \
+  s/MODULES=.*/MODULES=(ext4 nvidia vfio_pci vfio vfio_iommu_type1)/g; \
+  s/HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap block filesystems)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
 sed -i -e "s/PRESETS=.*/PRESETS=(\'default\')/g" /etc/mkinitcpio.d/linux.preset
 mkinitcpio -P
 
-# Setup bootloader
+# Configure pacman
+mkdir -p /etc/pacman.d/hooks/
+cat ./Configs/pacman.conf >/etc/pacman.conf
+cat ./Configs/paccache.hook >/etc/pacman.d/hooks/paccache.hook
+cat ./Configs/paccache.sh >/usr/local/bin/paccache.sh
+sed -i -e "s/$user/""$user""/g" /usr/local/bin/paccache.sh
+
+# Setup bootloader and hooks
 bootctl install
-mkdir -p /etc/pacman.d/hooks
 cat ./Configs/nvidia.hook >/etc/pacman.d/hooks/nvidia.hook
 cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
