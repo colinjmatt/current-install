@@ -3,10 +3,6 @@ hostname="hostname"
 user="user"
 sshuser="sshuser"
 
-hostname="spledik"
-user="colin"
-sshuser="colin"
-
 # Set region, locale and time synchronisation
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
