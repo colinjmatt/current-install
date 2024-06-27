@@ -60,7 +60,7 @@ mkdir -p /etc/pacman.d/hooks/
 cat ./Configs/pacman.conf >/etc/pacman.conf
 cat ./Configs/paccache.hook >/etc/pacman.d/hooks/paccache.hook
 cat ./Configs/paccache.sh >/usr/local/bin/paccache.sh
-sed -i -e "s/$user/""$user""/g" /usr/local/bin/paccache.sh
+sed -i -e "s/\$user/""$user""/g" /usr/local/bin/paccache.sh
 chmod +x /usr/local/bin/paccache.sh
 
 # Setup bootloader and hooks
@@ -69,11 +69,13 @@ cat ./Configs/nvidia.hook >/etc/pacman.d/hooks/nvidia.hook
 cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
+rootuuid=$(blkid | grep /dev/nvme0n1p3 | awk -F '"' '{print $2}')
+sed -i -e "s/\$rootuuid/""$rootuuid""/g" /boot/loader/entries/arch.conf
 
 # FOR ENCRYPTION ONLY
 #cat ./Configs/arch-encrypted.conf >/boot/loader/entries/arch.conf
 #encryptuuid=$(blkid | grep crypto_LUKS | grep 0n1p2 | awk -F '"' '{print $2}')
-#sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch*.conf
+#sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch.conf
 
 # Configure quiet boot
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
