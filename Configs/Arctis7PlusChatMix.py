@@ -129,10 +129,10 @@ class Arctis7PlusChatMix:
         try:
             self.log.info("Assigning VAC sink monitors output to default device...")
 
-            os.system(f'pw-link "Arctis_Game:monitor_FL" '
+            os.system(f'pw-link "combined:monitor_FL" '
             f'"{default_sink}:playback_FL" 1>/dev/null')
 
-            os.system(f'pw-link "Arctis_Game:monitor_FR" '
+            os.system(f'pw-link "combined:monitor_FR" '
             f'"{default_sink}:playback_FR" 1>/dev/null')
 
             os.system(f'pw-link "Arctis_Chat:monitor_FL" '
@@ -168,7 +168,7 @@ class Arctis7PlusChatMix:
                 virtual_device_volume = "{}%".format(read_input[2])
         
                 # os.system calls to issue the commands directly to pactl
-                os.system(f'pactl set-sink-volume Arctis_Game {default_device_volume}')
+                os.system(f'pactl set-sink-volume combined {default_device_volume}')
                 os.system(f'pactl set-sink-volume Arctis_Chat {virtual_device_volume}')
             except usb.core.USBTimeoutError:
                 pass
