@@ -111,6 +111,8 @@ usermod -a -G input $user
 mkdir -p /etc/libvirt/{devices,storage,hooks}
 
 # CPU set to performance and GPU preparation via hooks
+cat ./Configs/qemu >/etc/libvirt/hooks/qemu
+chmod +x /etc/libvirt/hooks/qemu
 mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/
 mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/release/end/
 cat ./Configs/start.sh >/etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/start.sh
