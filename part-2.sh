@@ -6,7 +6,10 @@ sshuser="sshuser"
 # Set region, locale and time synchronisation
 ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
 hwclock --systohc
-sed -i -e "s/\#en_GB.UTF-8\ UTF-8/en_GB.UTF-8\ UTF-8/g" /etc/locale.gen
+sed -i -e " \
+  s/\#en_GB.UTF-8\ UTF-8/en_GB.UTF-8\ UTF-8/g; \
+  s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" \
+/etc/locale.gen
 locale-gen
 
 echo "LANG=en_GB.UTF-8" > /etc/locale.conf
@@ -58,6 +61,7 @@ cat ./Configs/pacman.conf >/etc/pacman.conf
 cat ./Configs/paccache.hook >/etc/pacman.d/hooks/paccache.hook
 cat ./Configs/paccache.sh >/usr/local/bin/paccache.sh
 sed -i -e "s/$user/""$user""/g" /usr/local/bin/paccache.sh
+chmod +x /usr/local/bin/paccache.sh
 
 # Setup bootloader and hooks
 bootctl install
