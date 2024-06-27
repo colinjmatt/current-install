@@ -125,8 +125,12 @@ ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
 ln -s /etc/libvirt/storage/MacOS.xml /etc/libvirt/storage/autostart/MacOS.xml
 ln -s /etc/libvirt/storage/Windows.xml /etc/libvirt/storage/autostart/Windows.xml
 
+# VM Network
+cat ./Configs/default.xml >/etc/libvirt/qemu/networks/default.xml
+ln -sf /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/autostart/default.xml
+
 # VM configs
-cat ./Configs/macos-high-sierra.xml >/etc/libvirt/qemu/macos-high-sierra.xml
+cat ./Configs/macos-high-sierra.xml >/etc/libvirt/qemu/macos.xml
 cat ./Configs/win-gaming.xml >/etc/libvirt/qemu/win-gaming.xml
 cat ./Configs/win-work.xml >/etc/libvirt/qemu/win-work.xml
 
@@ -146,17 +150,19 @@ sudo chown root:kvm ./*
 sudo chmod 0440 ./* )
 
 # Configure Network Manager
-cat ./Configs/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection
+cat ./Configs/Ethernet.nmconnection >/etc/NetworkManager/system-connections/Ethernet.nmconnection
 sed -i -e "\
-  s/\$domain/""$domain""/g; \
   s/\$ipaddress/""$ipaddress""/g; \
+  s/\$gateway/""$gateway""/g; \
   s/\$dns/""$dns""/g; \
-  s/\$gateway/""$gateway""/g" \
-/etc/NetworkManager/system-connections/Bridge\ Master-c8747370-fba6-4f74-a42e-583d630758ee.nmconnection
+  s/\$domain/""$domain""/g" \
+/etc/NetworkManager/system-connections/Ethernet.nmconnection
 
-cat ./Configs/Bridge\ Slave.nmconnection >/etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
-enet="$(ip -o link | grep "state UP" | awk -F': ' '{print $2}')"
-sed -i -e "s/\$enet/""$enet""/g" /etc/NetworkManager/system-connections/Bridge\ Slave.nmconnection
+cat ./Configs/VirtualBridge.nmconnection >/etc/NetworkManager/system-connections/VirtualBridge.nmconnection.nmconnection
+sed -i -e "\
+  s/\$dns/""$dns""/g; \
+  s/\$domain/""$domain""/g" \
+/etc/NetworkManager/system-connections/VirtualBridge.nmconnection.nmconnection
 
 # Create autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
