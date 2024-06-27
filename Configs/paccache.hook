@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning pacman and paru cache...
+When = PostTransaction
+Exec = /usr/local/bin/paccache.sh
+Depends = pacman-contrib
