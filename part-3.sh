@@ -177,6 +177,7 @@ cat ./Configs/Arctis7PlusChatMix.desktop >/home/"$user"/.config/autostart/Arctis
 
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
+sed -i -e "s/\$user/""$user""/g" /usr/local/bin/backup.sh
 read -n 1 -s -r -p "Switch to another TTY and complete the backup script variables. Press any key to continue..."
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
