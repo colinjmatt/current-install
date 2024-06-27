@@ -5,7 +5,7 @@ hostname="hostname"
 machine="machine" # Friendly computer name for airplay stuff
 domain="x.local"
 ipaddress="192.168.1.x"
-dns="192.168.1.1; 1.1.1.1; 1.0.0.1; 8.8.8.8; 8.8.4.4" # semi-colon separated multiples
+dns="192.168.1.1; 1.1.1.1; 8.8.8.8; 1.0.0.1; 8.8.4.4" # semi-colon separated multiples
 gateway="192.168.1.1"
 printerip="192.168.1.120"
 
@@ -25,12 +25,13 @@ echo "DNS=$dns2" >> /etc/systemd/resolved.conf
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
 
 # All currently required software in official repos
+pacman -Sy
 pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils \
   blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
-  edk2-ovmf epdfview exfat-utils \
+  edk2-ovmf exfat-utils \
   ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld fuse2 \
   gnome-disk-utility gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
@@ -40,6 +41,7 @@ pacman -S --noconfirm \
   mesa mesa-vdpau  \
   nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
+  openrgb \
   p7zip pacman-contrib paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
   qemu-desktop \
   reflector rsync \
@@ -52,7 +54,7 @@ pacman -S --noconfirm \
   zip
 
 # Configure reflector
-cat ./Configs/10-mirrorupgrade.hook >/etc/pacman.d/hooks/10-mirrorupgrade.hook
+cat ./Configs/mirrorupgrade.hook >/etc/pacman.d/hooks/mirrorupgrade.hook
 
 # Set X keymap
 localectl set-x11-keymap gb
@@ -70,15 +72,15 @@ cd /tmp/paru-bin || return
 su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
+  epdfview-git \
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
   mugshot \
   numix-circle-icon-theme-git numix-icon-theme-git \
-  openrgb \
   p7zip-gui \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
-  xfce4-volumed-pulse-git')
+  xfce4-volumed-pulse')
 
 # Blacklist nouveau
 cat ./Configs/blacklist-nouveau.conf >/etc/modprobe.d/blacklist-nouveau.conf
@@ -86,11 +88,9 @@ cat ./Configs/blacklist-nouveau.conf >/etc/modprobe.d/blacklist-nouveau.conf
 # Steam
 echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
-pacman -Syu --noconfirm
-pacman -S lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam --noconfirm
+pacman -Sy
+pacman -S --noconfirm lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam
 su "$paruuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin protonup-qt-bin steamtinkerlaunch && steamtinkerlaunch compat add'
-sed -i -e "s/\#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/g" /etc/locale.gen
-locale-gen
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
@@ -99,7 +99,7 @@ brsaneconfig4 -a name=BROTHER-DCP-9020CDW model=DCP-9020CDW ip="$printerip"
 # Set user to autologin
 sed -i "s/#autologin-user=.*/autologin-user=""$user""/g" /etc/lightdm/lightdm.conf
 
-# Lightdm needs to wait for graphics to load (SSD first world issues)
+# Lightdm needs to wait for graphics to load before initialising
 sed -i "s/#logind-check-graphical=.*/logind-check-graphical=true/g" /etc/lightdm/lightdm.conf
 
 # Configure QEMU and libvirt
@@ -164,14 +164,16 @@ mkdir -p /home/"$user"/.config/autostart
 # RGB stuff
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 
+# Set the combined sink as deafult, always
+cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
+cat ./Configs/pactl-combined.desktop >/home/colin/.config/autostart/pactl-combined.desktop
+
 # Headset Control
 cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
 cat ./Configs/Arctis7PlusChatMix.py >/usr/local/bin/Arctis7PlusChatMix.py
-cat ./Configs/99arctis7plus.rules /etc/udev/rules.d/99arctis7plus.rules
+cat ./Configs/99-arctis7plus.rules >/etc/udev/rules.d/99-arctis7plus.rules
+sed -i -e "s/\$user/""$user""/g" /etc/udev/rules.d/99-arctis7plus.rules
 cat ./Configs/Arctis7PlusChatMix.desktop >/home/"$user"/.config/autostart/Arctis7PlusChatMix.desktop
-
-sed -i -e "s/$user/""$user""/g" /etc/udev/rules.d/91-steelseries-arctis-7p.rules
-su "$user" -P -c 'systemctl --user enable arctis7pcm.service'
 
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
