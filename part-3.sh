@@ -33,16 +33,19 @@ pacman -S --noconfirm \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf exfat-utils \
   ffmpegthumbnailer ffnvcodec-headers file-roller firefox firewalld fuse2 \
-  gnome-disk-utility gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
+  gnome-disk-utility gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi \
+  gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
-  libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat libxnvctrl libva-mesa-driver \
-  libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings lutris \
+  libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat \
+  libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings lutris \
   mesa mesa-vdpau  \
   nvidia-settings nvidia-utils \
-  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
+  neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts \
+  noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   openrgb \
-  p7zip pacman-contrib paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
+  p7zip pacman-contrib paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire \
+  pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
   qemu-desktop \
   reflector rsync \
   sane seahorse shairplay slock speedtest-cli sshfs swtpm sysstat \
@@ -74,6 +77,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   epdfview-git \
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
+  i2c-nct6775-dkms \
   mugshot \
   numix-circle-icon-theme-git numix-icon-theme-git \
   p7zip-gui \
@@ -118,6 +122,9 @@ mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/release/end/
 cat ./Configs/start.sh >/etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/start.sh
 cat ./Configs/end.sh >/etc/libvirt/hooks/qemu.d/win-gaming/release/end/end.sh
 chmod -R +x /etc/libvirt/hooks/
+
+# Disable sp5100 watchdog
+cat ./Configs/disable-sp5100-watchdog.conf >/etc/modprobe.d/disable-sp5100-watchdog.conf
 
 # Storage options for virt-manager
 cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
@@ -171,10 +178,7 @@ mkdir -p /home/"$user"/.config/autostart
 
 # RGB stuff
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
-
-# Set the combined sink as deafult, always
-cat ./Configs/pactl-combined.sh >/usr/local/bin/pactl-combined.sh
-cat ./Configs/pactl-combined.desktop >/home/colin/.config/autostart/pactl-combined.desktop
+cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
 
 # Headset Control
 cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
@@ -193,6 +197,7 @@ cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 # Configure pipewire to output to all devices
 mkdir -p /home/"$user"/.config/pipewire/pipewire-pulse.conf.d
 cat ./Configs/add-combined-sink.conf >/home/"$user"/.config/pipewire/pipewire-pulse.conf.d/add-combined-sink.conf
+chown colin:colin /home/"$user"/.config/pipewire/pipewire-pulse.conf.d/add-combined-sink.conf
 
 # Shairplay & RPi-play
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
@@ -233,6 +238,7 @@ systemctl enable avahi-daemon \
                  libvirtd \
                  lightdm \
                  NetworkManager \
+                 nvidia-persistenced \
                  openrgb \
                  systemd-oomd \
                  systemd-timesyncd \
