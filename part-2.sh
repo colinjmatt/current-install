@@ -48,8 +48,8 @@ echo "options kvm report_ignored_msrs=0" >/etc/modprobe.d/kvm.conf
 # FOR READING FAT ON ENCYPTION KEY, 'nls_cp437' must be added first to [MODULES]
 # FOR ENCRYPTION, 'encrypt' and 'lvm2' must be added between 'block' and 'filesystems' in [HOOKS]
 sed -i -e " \
-  s/MODULES=.*/MODULES=(ext4 nvidia vfio_pci vfio vfio_iommu_type1)/g; \
-  s/HOOKS=.*/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap block filesystems)/g; \
+  s/MODULES=.*/MODULES=(ext4 nvidia nvidia_modeset nvidia_uvm nvidia_drm vfio_pci vfio vfio_iommu_type1)/g; \
+  s/HOOKS=.*/HOOKS=(base udev autodetect microcode modconf keyboard keymap block filesystems)/g; \
   s/#COMPRESSION=\"ztsd\"/COMPRESSION=\"zstd\"/g" \
 /etc/mkinitcpio.conf
 sed -i -e "s/PRESETS=.*/PRESETS=(\'default\')/g" /etc/mkinitcpio.d/linux.preset
