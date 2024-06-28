@@ -65,7 +65,6 @@ pacstrap /mnt base base-devel amd-ucode linux linux-firmware linux-headers nvidi
 # Generate fstab for filesystem mounts and add /tmp as ram drive
 genfstab -pU /mnt >>/mnt/etc/fstab
 echo "tmpfs	/tmp	tmpfs	defaults,noatime,mode=1777	0	0" >>/mnt/etc/fstab
-sed -i -e "s/fmask=0022,dmask=0022/fmask=0077,dmask=0077/g" /mnt/etc/fstab
 
 # Copy mirrorlist to installed base system
 cat /etc/pacman.d/mirrorlist >/mnt/etc/pacman.d/mirrorlist
