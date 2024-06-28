@@ -59,8 +59,8 @@ mkdir -p /mnt/mnt/{Games,VMs}
 mount /dev/nvme1n1p1 /mnt/mnt/Games
 mount /dev/nvme0n1p4 /mnt/mnt/VMs
 
-# Install system
-pacstrap /mnt base base-devel amd-ucode linux linux-firmware linux-headers lvm2 nvidia systemd-resolvconf openssh wget nano git
+# Install system - 'lvm' needed for encryption
+pacstrap /mnt base base-devel amd-ucode linux linux-firmware linux-headers nvidia systemd-resolvconf openssh wget nano git
 
 # Generate fstab for filesystem mounts and add /tmp as ram drive
 genfstab -pU /mnt >>/mnt/etc/fstab
