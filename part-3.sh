@@ -167,18 +167,11 @@ sed -i -e "\
   s/\$domain/""$domain""/g" \
 /etc/NetworkManager/system-connections/Ethernet.nmconnection
 
-cat ./Configs/VirtualBridge.nmconnection >/etc/NetworkManager/system-connections/VirtualBridge.nmconnection.nmconnection
-sed -i -e "\
-  s/\$dns/""$dns""/g; \
-  s/\$domain/""$domain""/g" \
-/etc/NetworkManager/system-connections/VirtualBridge.nmconnection.nmconnection
-
 # Create autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
 
-# RGB stuff
+# OpenRGB config
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
-cat ./Configs/openrgb.sh >/usr/local/bin/openrgb.sh
 
 # Headset Control
 cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
@@ -194,19 +187,14 @@ read -n 1 -s -r -p "Switch to another TTY and complete the backup script variabl
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
-# Configure pipewire to output to all devices
-mkdir -p /home/"$user"/.config/pipewire/pipewire-pulse.conf.d
-cat ./Configs/add-combined-sink.conf >/home/"$user"/.config/pipewire/pipewire-pulse.conf.d/add-combined-sink.conf
-chown colin:colin /home/"$user"/.config/pipewire/pipewire-pulse.conf.d/add-combined-sink.conf
-
 # Shairplay & RPi-play
 cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
 
 sed -i -e "s/$machine/""$machine""/g" \
-  /home/"$user"/.config/autostart/RPi-play.desktop \
-  /home/"$user"/.config/autostart/Shairplay.desktop
+  /home/"$machine"/.config/autostart/RPi-play.desktop \
+  /home/"$machine"/.config/autostart/Shairplay.desktop
 
 cat ./Configs/libao.conf >/etc/libao.conf
 
@@ -220,9 +208,7 @@ cat ./Configs/xorg.conf >/etc/X11/xorg.conf
 chmod +x -R \
   /usr/local/bin/*
 
-chown -R "$user":"$user" \
-  /home/"$user"/.config/autostart \
-  /home/"$user"/.local/state/wireplumber/default-nodes
+chown -R "$user":"$user" /home/"$user"/.config/autostart
 
 # Disable initial networking services
 systemctl disable systemd-networkd \
@@ -239,7 +225,6 @@ systemctl enable avahi-daemon \
                  lightdm \
                  NetworkManager \
                  nvidia-persistenced \
-                 openrgb \
                  systemd-oomd \
                  systemd-timesyncd \
                  virtlogd.socket \
