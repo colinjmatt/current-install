@@ -42,13 +42,24 @@ class Arctis7PlusChatMix:
     def _setup_sinks(self):
         try:
             self.log.info("Setting up PipeWire sinks...")
-            # Load the combine-sink module
-            os.system("pactl load-module module-combine-sink sink_name=Combined sink_properties=device.description=Combined slaves=alsa_output.pci-0000_09_00.1.hdmi-stereo,alsa_output.pci-0000_0b_00.4.analog-stereo,alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo")
-            # Load the null-sink module for Chat
-            os.system("pactl load-module module-null-sink sink_name=Chat sink_properties=device.description=Chat")
-            # Load the loopback module for Chat
-            os.system("pactl load-module module-loopback source=Chat.monitor sink=alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo")
+
+            # Define the pactl commands
+            combine_sink_cmd = "pactl load-module module-combine-sink sink_name=Combined sink_properties=device.description=Combined slaves=alsa_output.pci-0000_09_00.1.hdmi-stereo,alsa_output.pci-0000_0b_00.4.analog-stereo,alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo"
+            null_sink_cmd = "pactl load-module module-null-sink sink_name=Chat sink_properties=device.description=Chat"
+            loopback_cmd = "pactl load-module module-loopback source=Chat.monitor sink=alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo"
+
+            # Execute each command and redirect output to /dev/null if log level is not DEBUG
+            if self.log.level > logging.DEBUG:
+                combine_sink_cmd += " > /dev/null 2>&1"
+                null_sink_cmd += " > /dev/null 2>&1"
+                loopback_cmd += " > /dev/null 2>&1"
+
+            os.system(combine_sink_cmd)
+            os.system(null_sink_cmd)
+            os.system(loopback_cmd)
+
             self.log.info("PipeWire sinks setup completed.")
+
         except Exception as e:
             self.log.error(f"Failed to set up sinks: {e}")
             self.die_gracefully()
@@ -95,7 +106,7 @@ class Arctis7PlusChatMix:
 
                 except usb.core.USBError as e:
                     if e.errno == 110:
-                        self.log.debug("No data received from chatmix wheel")
+                        self.log.debug("No data received from ChatMix wheel")
                     else:
                         self.log.error(f"Communication error: {e}")
                     continue  # Continue monitoring even after errors
