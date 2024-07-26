@@ -38,7 +38,7 @@ pacman -S --noconfirm \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat \
-  libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings lutris \
+  libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau  \
   nvidia-settings nvidia-utils \
   neofetch net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts \
@@ -80,7 +80,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   mugshot \
   numix-circle-icon-theme-git numix-icon-theme-git \
-  p7zip-gui \
+  p7zip-gui protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
