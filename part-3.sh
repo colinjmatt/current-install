@@ -31,9 +31,9 @@ pacman -S --noconfirm \
   blueman bluez bluez-utils bridge-utils \
   ccache cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
-  edk2-ovmf engrampa exfat-utils \
+  edk2-ovmf engrampa exfatprogs \
   ffmpegthumbnailer ffnvcodec-headers firefox firewalld fuse2 \
-  gnome-disk-utility gnome-keyring gscan2pdf gspell gst-libav gst-plugin-pipewire gstreamer-vaapi \
+  gnome-keyring gscan2pdf gparted gspell gst-libav gst-plugin-pipewire gstreamer-vaapi \
   gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
