@@ -37,7 +37,7 @@ pacman -S --noconfirm \
   gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
-  libgsf libopenraw libreoffice-fresh libva-utils libva-vdpau-driver libvdpau-va-gl libxcrypt-compat \
+  libgsf libopenraw libreoffice-fresh libva-utils libva-nvidia-driver libvdpau-va-gl libxcrypt-compat \
   libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau  \
   nvidia-settings nvidia-utils \
