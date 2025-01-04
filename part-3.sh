@@ -80,7 +80,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   mugshot \
   numix-circle-icon-theme-git numix-icon-theme-git \
-  p7zip-gui protontricks protonup-qt-bin \
+  protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   ttf-ms-fonts \
   virtio-win \
@@ -167,7 +167,7 @@ sed -i -e "\
   s/\$domain/""$domain""/g" \
 /etc/NetworkManager/system-connections/Ethernet.nmconnection
 
-# Create autostart directory if it doesn't exist
+# Create user autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
 
 # OpenRGB config
