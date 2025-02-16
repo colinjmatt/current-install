@@ -48,7 +48,7 @@ pacman -S --noconfirm \
   pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
   qemu-desktop \
   reflector rsync \
-  sane seahorse shairplay slock speedtest-cli sshfs swtpm sysstat \
+  sane seahorse slock speedtest-cli sshfs swtpm sysstat \
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
   virt-manager \
@@ -82,6 +82,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   numix-circle-icon-theme-git numix-icon-theme-git \
   protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
+  shairplay-git \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse')
