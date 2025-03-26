@@ -44,7 +44,7 @@ pacman -S --noconfirm \
   net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts \
   noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   openrgb \
-  p7zip pacman-contrib paprefs parted pasystray pavucontrol polkit poppler poppler-data pipewire \
+  p7zip pacman-contrib paprefs parted pasystray pavucontrol pigz polkit poppler poppler-data pipewire \
   pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
   qemu-desktop \
   reflector rsync \
