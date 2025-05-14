@@ -40,7 +40,7 @@ pacman -S --noconfirm \
   libgsf libopenraw libreoffice-fresh libva-utils libva-nvidia-driver libvdpau-va-gl libxcrypt-compat \
   libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
   mesa mesa-vdpau  \
-  nvidia-settings nvidia-utils \
+  nvidia-open nvidia-settings nvidia-utils \
   net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts \
   noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   openrgb \
