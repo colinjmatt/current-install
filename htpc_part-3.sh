@@ -20,7 +20,7 @@ pacman -S --noconfirm \
   libaacs libbluray libdvdcss libdvdnav libdvdread libgsf libopenraw libretro \
   libva-mesa-driver libva-utils libva-vdpau-driver libvdpau-va-gl \
   libxcrypt-compat lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
-  mesa mesa-utils mesa-vdpau \
+  mesa mesa-utils mesa-vdpau mtools \
   network-manager-applet networkmanager noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns \
   p7zip paprefs pasystray pavucontrol pipewire pipewire-alsa pipewire-pulse \
   reflector rsync \
