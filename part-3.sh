@@ -65,7 +65,7 @@ localectl set-x11-keymap gb
 # Optimise AUR compiles
 sed -i -e "\
   s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g; \
-  s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j33\"/g" \
+  s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j$(nproc)\"/g" \
 /etc/makepkg.conf
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
@@ -97,6 +97,8 @@ echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Sy
 pacman -S --noconfirm lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam
 su "$paruuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin protonup-qt-bin steamtinkerlaunch && steamtinkerlaunch compat add'
+echo "unShaderBackgroundProcessingThreads $(nproc)" > /home/"$user"/.local/share/Steam/steam_dev.cfg
+chown "$user":"$user" /home/"$user"/.local/share/Steam/steam_dev.cfg
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
