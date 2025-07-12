@@ -9,17 +9,15 @@ dns="192.168.1.1; 1.1.1.1; 8.8.8.8; 1.0.0.1; 8.8.4.4" # semi-colon separated mul
 gateway="192.168.1.1"
 printerip="192.168.1.120"
 
-dns2="${dns//;}"
-
 localectl set-keymap uk
 timedatectl set-ntp true
 hostnamectl set-hostname "$hostname"
 
 # Add DNS server(s)
-for server in $dns2; do
-  echo "nameserver $server" >> /etc/resolv.conf
+IFS=';' read -ra DNS_ARRAY <<< "$dns"
+for server in "${DNS_ARRAY[@]}"; do
+  echo "nameserver $server" >> /etc/resolv2.conf
 done
-echo "DNS=$dns2" >> /etc/systemd/resolved.conf
 
 # Arch key servers are bad
 echo "keyserver hkps://keys.openpgp.org" >>/etc/pacman.d/gnupg/gpg.conf
@@ -113,8 +111,7 @@ sed -i "s/#logind-check-graphical=.*/logind-check-graphical=true/g" /etc/lightdm
 # Configure QEMU and libvirt
 cat ./Configs/qemu.conf >>/etc/libvirt/qemu.conf
 sed -i -e "s/\user.*/user\ =\ \"""$user""\"/g" /etc/libvirt/qemu.conf
-usermod -a -G libvirt $user
-usermod -a -G input $user
+usermod -a -G input,kvm,libvirt,render $user
 
 mkdir -p /etc/libvirt/{devices,storage,hooks}
 
@@ -222,6 +219,7 @@ systemctl disable systemd-networkd \
 systemctl enable avahi-daemon \
                  backup.timer \
                  bluetooth \
+                 cpupower \
                  cups \
                  fstrim.timer \
                  haveged \
