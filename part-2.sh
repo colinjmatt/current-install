@@ -69,7 +69,8 @@ cat ./Configs/nvidia.hook >/etc/pacman.d/hooks/nvidia.hook
 cat ./Configs/systemd-boot.hook >/etc/pacman.d/hooks/systemd-boot.hook
 cat ./Configs/loader.conf >/boot/loader/loader.conf
 cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
-rootuuid=$(blkid | grep /dev/nvme0n1p3 | awk -F '"' '{print $2}')
+
+rootuuid=$(blkid -s UUID -o value /dev/nvme0n1p3)
 sed -i -e "s/\$rootuuid/""$rootuuid""/g" /boot/loader/entries/arch.conf
 
 # FOR ENCRYPTION ONLY
