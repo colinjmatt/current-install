@@ -51,7 +51,7 @@ pacman -S --noconfirm \
   unrar unzip usbutils \
   virt-manager \
   wireplumber \
-  xdg-user-dirs xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
 # Configure reflector
@@ -93,10 +93,17 @@ cat ./Configs/blacklist-nouveau.conf >/etc/modprobe.d/blacklist-nouveau.conf
 echo "[multilib]" >>/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
 pacman -Sy
-pacman -S --noconfirm lib32-fontconfig lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd steam
+pacman -S --noconfirm \
+  lib32-fontconfig lib32-gamemode lib32-libva-mesa-driver lib32-libnm lib32-mesa lib32-mesa-utils lib32-mesa-vdpau lib32-nvidia-utils lib32-systemd \
+  gamemode steam
 su "$paruuser" -P -c 'paru -S --noconfirm proton-ge-custom-bin protonup-qt-bin steamtinkerlaunch && steamtinkerlaunch compat add'
 echo "unShaderBackgroundProcessingThreads $(nproc)" > /home/"$user"/.local/share/Steam/steam_dev.cfg
 chown "$user":"$user" /home/"$user"/.local/share/Steam/steam_dev.cfg
+usermod -a -G gamemode $user
+
+# Gaming enhancements
+echo "vm.max_map_count = 2147483642" > /etc/sysctl.d/80-gamecompatibility.conf
+cat ./Configs/consistent-response-time-for-gaming.conf >/etc/tmpfiles.d/consistent-response-time-for-gaming.conf
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
