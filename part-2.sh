@@ -81,7 +81,7 @@ sed -i -e "s/\$rootuuid/""$rootuuid""/g" /boot/loader/entries/arch.conf
 # Configure quiet boot
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
 cat ./Configs/systemd-fsck\@.service >/etc/systemd/system/systemd-fsck\@.service
-echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
+cat ./Configs/91-kernel-printk.conf > /etc/tmpfiles.d/91-kernel-printk.conf
 
 # Configure SSH
 cat ./Configs/sshd_config >/etc/ssh/sshd_config
@@ -93,9 +93,6 @@ read -n 1 -s -r -p "Switch to another TTY and add the SSH key for $sshuser. Pres
 chmod 0700 .ssh
 chmod 0600 .ssh/*
 chown -R "$user":"$user" .ssh )
-
-# Fix system freezes when copying lots of/huge files
-cat ./Configs/10-copying.conf >/etc/sysctl.d/10-copying.conf
 
 # Enable networking and SSH
 systemctl enable systemd-networkd \
