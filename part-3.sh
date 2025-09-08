@@ -27,12 +27,12 @@ pacman -Sy
 pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils \
   blueman bluez bluez-utils bridge-utils \
-  ccache cpupower cups cups-pdf \
+  ccache code cpupower cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf engrampa exfatprogs \
   fastfetch ffmpegthumbnailer ffnvcodec-headers firefox firewalld fuse2 \
-  gnome-keyring gscan2pdf gparted gspell gst-libav gst-plugin-pipewire gstreamer-vaapi \
-  gtk-engine-murrine gvfs gvfs-smb \
+  gamescope gnome-keyring gscan2pdf gparted gspell gst-libav gst-plugin-pipewire \
+  gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
   haveged helvum htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-nvidia-driver libvdpau-va-gl libxcrypt-compat \
@@ -74,11 +74,12 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
   epdfview-git \
-  gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
+  github-desktoo gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
   i2c-nct6775-dkms \
   mugshot \
   numix-circle-icon-theme-git numix-icon-theme-git \
+  openai-chatgpt-nativefier \
   protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
   shairplay-git \
@@ -102,8 +103,7 @@ chown "$user":"$user" /home/"$user"/.local/share/Steam/steam_dev.cfg
 usermod -a -G gamemode $user
 
 # Gaming enhancements
-echo "vm.max_map_count = 2147483642" > /etc/sysctl.d/80-gamecompatibility.conf
-cat ./Configs/consistent-response-time-for-gaming.conf >/etc/tmpfiles.d/consistent-response-time-for-gaming.conf
+cat ./Configs/90-vm-and-scheduler.conf >/etc/tmpfiles.d/90-vm-and-scheduler.conf
 
 # Setup scanner
 echo "$printerip" >> /etc/sane.d/net.conf
