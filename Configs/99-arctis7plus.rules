@@ -1,4 +1,4 @@
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="220e", OWNER="$user", GROUP="$user", MODE="0664"
-
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="220e", TAG+="systemd", ENV{SYSTEMD_ALIAS}="/dev/arctis7"
-ACTION=="remove", SUBSYSTEM=="usb", ENV{PRODUCT}=="1038/220e/*", TAG+="systemd"
+# SteelSeries Arctis 7+ (1038:220e)
+# Grant access to the *logged-in seat* (no hardcoded user), and cover hidraw.
+SUBSYSTEM=="usb", ATTR{idVendor}=="1038", ATTR{idProduct}=="220e", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="220e", TAG+="uaccess"
