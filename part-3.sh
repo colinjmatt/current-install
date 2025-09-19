@@ -33,7 +33,7 @@ pacman -S --noconfirm \
   fastfetch ffmpegthumbnailer ffnvcodec-headers firefox firewalld fuse2 \
   gamescope gnome-keyring gscan2pdf gparted gspell gst-libav gst-plugin-pipewire \
   gstreamer-vaapi gtk-engine-murrine gvfs gvfs-smb \
-  haveged helvum htop hunspell-en_gb \
+  haveged helvum hidapi htop hunspell-en_gb \
   i2c-tools \
   libgsf libopenraw libreoffice-fresh libva-utils libva-nvidia-driver libvdpau-va-gl libxcrypt-compat \
   libxnvctrl libva-mesa-driver libvirt lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings \
@@ -42,8 +42,9 @@ pacman -S --noconfirm \
   net-tools network-manager-applet networkmanager networkmanager-openvpn noto-fonts \
   noto-fonts-cjk noto-fonts-emoji noto-fonts-extra nss-mdns ntfs-3g \
   openrgb \
-  p7zip pacman-contrib paprefs parted pasystray pavucontrol pigz polkit poppler poppler-data pipewire \
-  pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf python-psutil python-pyusb \
+  p7zip pacman-contrib paprefs parted pasystray pavucontrol pigz polkit poppler poppler-data \
+  pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-x11-bell pipewire-zeroconf \
+  python-hid python-psutil python-pyusb \
   qemu-desktop \
   reflector rsync \
   sane seahorse slock speedtest-cli sshfs swtpm sysstat \
