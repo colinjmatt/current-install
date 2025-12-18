@@ -63,14 +63,17 @@ localectl set-x11-keymap gb
 
 # Optimise AUR compiles
 sed -i -e "\
-  s/BUILDENV=.*/BUILDENV=(fakeroot \!distcc color ccache check \!sign)/g; \
+  s/BUILDENV=.*/BUILDENV=(\!distcc color ccache check \!sign)/g; \
   s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j$(nproc)\"/g" \
 /etc/makepkg.conf
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-su "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
-cd /tmp/paru-bin || return
+u "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
+cd /tmp/paru || return
+# paru-bin isn't maintained as quickly as paru, so using paru directly.
+#su "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
+#cd /tmp/paru-bin || return
 su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
