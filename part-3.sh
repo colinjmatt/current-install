@@ -52,7 +52,7 @@ pacman -S --noconfirm \
   unrar unzip usbutils \
   virt-manager \
   wireplumber \
-  xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
+  xdg-desktop-portal-gtk xdg-utils xfce4 xfce4-goodies xorg-server xorg-xinput xorg-xrandr xterm \
   zip
 
 # Configure reflector
@@ -221,6 +221,9 @@ chmod +x -R \
   /usr/local/bin/*
 
 chown -R "$user":"$user" /home/"$user"/.config/autostart
+
+# Set max journal size for systemd-journald
+echo "SystemMaxUse=50M" >>/etc/systemd/journald.conf
 
 # Disable initial networking services
 systemctl disable systemd-networkd \
