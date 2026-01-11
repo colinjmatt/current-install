@@ -27,7 +27,7 @@ pacman -Sy
 pacman -S --noconfirm \
   accountsservice alsa-plugins alsa-utils \
   blueman bluez bluez-utils bridge-utils \
-  ccache code cpupower cups cups-pdf \
+  ccache code cpupower cuda cups cups-pdf \
   discord djvulibre dmidecode dnsmasq dnsutils dosfstools \
   edk2-ovmf engrampa exfatprogs \
   fastfetch ffmpegthumbnailer ffnvcodec-headers firefox firewalld fuse2 \
@@ -69,7 +69,7 @@ sed -i -e "\
 
 # Install AUR helper of the month (as a non-priviledged user) and install AUR software
 ( cd /tmp || return
-u "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
+su "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
 cd /tmp/paru || return
 # paru-bin isn't maintained as quickly as paru, so using paru directly.
 #su "$paruuser" -P -c 'git clone https://aur.archlinux.org/paru-bin.git'
@@ -86,7 +86,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   openai-chatgpt-nativefier \
   protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer rpiplay \
-  shairplay-git \
+  shairplay-git sunshine \
   ttf-ms-fonts \
   virtio-win \
   xfce4-volumed-pulse')
@@ -245,5 +245,7 @@ systemctl enable avahi-daemon \
                  systemd-timesyncd \
                  virtlogd.socket \
                  vncserver-x11-serviced
+
+su "$user" -P -c 'systemctl --user enable sunshine --now'
 
 reboot
