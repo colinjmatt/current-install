@@ -85,9 +85,10 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   numix-circle-icon-theme-git numix-icon-theme-git \
   openai-chatgpt-nativefier \
   protontricks protonup-qt-bin \
-  realvnc-vnc-server realvnc-vnc-viewer rpiplay \
+  realvnc-vnc-server realvnc-vnc-viewer \
   shairplay-git sunshine \
   ttf-ms-fonts \
+  uxplay \
   virtio-win \
   xfce4-volumed-pulse')
 
@@ -200,13 +201,11 @@ cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
 # Shairplay & RPi-play
-cat ./Configs/RPi-play.desktop >/home/"$user"/.config/autostart/RPi-play.desktop
+cat ./Configs/UXPlay.desktop >/home/"$user"/.config/autostart/UXPlay.desktop
 cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
 
-sed -i -e "s/$machine/""$machine""/g" \
-  /home/"$machine"/.config/autostart/RPi-play.desktop \
-  /home/"$machine"/.config/autostart/Shairplay.desktop
+sed -i -e "s/$machine/""$machine""/g" /home/"$machine"/.config/autostart/Shairplay.desktop
 
 cat ./Configs/libao.conf >/etc/libao.conf
 
