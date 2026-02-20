@@ -86,7 +86,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   openai-chatgpt-nativefier \
   protontricks protonup-qt-bin \
   realvnc-vnc-server realvnc-vnc-viewer \
-  shairplay-git sunshine \
+  sunshine \
   ttf-ms-fonts \
   uxplay \
   virtio-win \
@@ -200,12 +200,9 @@ read -n 1 -s -r -p "Switch to another TTY and complete the backup script variabl
 cat ./Configs/backup.service >/etc/systemd/system/backup.service
 cat ./Configs/backup.timer >/etc/systemd/system/backup.timer
 
-# Shairplay & RPi-play
+# UXPlay
 cat ./Configs/UXPlay.desktop >/home/"$user"/.config/autostart/UXPlay.desktop
-cat ./Configs/Shairplay.desktop >/home/"$user"/.config/autostart/Shairplay.desktop
 chown "$user":"$user" /home/"$user"/.config/autostart/*
-
-sed -i -e "s/$machine/""$machine""/g" /home/"$machine"/.config/autostart/Shairplay.desktop
 
 cat ./Configs/libao.conf >/etc/libao.conf
 
