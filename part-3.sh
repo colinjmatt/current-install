@@ -8,6 +8,8 @@ dns="192.168.1.1; 1.1.1.1; 8.8.8.8; 1.0.0.1; 8.8.4.4" # semi-colon separated mul
 gateway="192.168.1.1"
 printerip="192.168.1.120"
 
+
+
 localectl set-keymap uk
 timedatectl set-ntp true
 hostnamectl set-hostname "$hostname"
@@ -147,13 +149,15 @@ sudo chown root:kvm ./*
 sudo chmod 0440 ./* )
 
 # Configure Network Manager
-cat ./Configs/Ethernet.nmconnection >/etc/NetworkManager/system-connections/Ethernet.nmconnection
-sed -i -e "\
-  s/\$ipaddress/""$ipaddress""/g; \
-  s/\$gateway/""$gateway""/g; \
-  s/\$dns/""$dns""/g; \
-  s/\$domain/""$domain""/g" \
-/etc/NetworkManager/system-connections/Ethernet.nmconnection
+nmcli_dns="${dns//; / }"
+nmcli connection add type bridge con-name "Host Bridge" ifname virbr0
+nmcli connection modify "Host Bridge" \
+  ipv4.addresses "$ipaddress/24" \
+  ipv4.gateway "$gateway" \
+  ipv4.dns "$nmcli_dns" \
+  ipv4.dns-search "$domain" \
+  ipv4.method "manual"
+
 
 # Make autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
