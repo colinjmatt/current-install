@@ -45,8 +45,6 @@ chmod 0400 /etc/sudoers.d/"$sshuser"
 echo "options kvm report_ignored_msrs=0" >/etc/modprobe.d/kvm.conf
 
 # Add modules and hooks to mkinitcpio and generate
-# FOR READING FAT ON ENCYPTION KEY, 'nls_cp437' must be added first to [MODULES]
-# FOR ENCRYPTION, 'encrypt' and 'lvm2' must be added between 'block' and 'filesystems' in [HOOKS]
 sed -i -e " \
   s/MODULES=.*/MODULES=(ext4 nvidia nvidia_modeset nvidia_uvm nvidia_drm vfio_pci vfio vfio_iommu_type1)/g; \
   s/HOOKS=.*/HOOKS=(base udev autodetect microcode modconf keyboard keymap block filesystems)/g; \
@@ -72,11 +70,6 @@ cat ./Configs/arch.conf >/boot/loader/entries/arch.conf
 
 rootuuid=$(blkid -s UUID -o value /dev/nvme0n1p3)
 sed -i -e "s/\$rootuuid/""$rootuuid""/g" /boot/loader/entries/arch.conf
-
-# FOR ENCRYPTION ONLY
-#cat ./Configs/arch-encrypted.conf >/boot/loader/entries/arch.conf
-#encryptuuid=$(blkid | grep crypto_LUKS | grep 0n1p2 | awk -F '"' '{print $2}')
-#sed -i -e "s/\$encryptuuid/""$encryptuuid""/g" /boot/loader/entries/arch.conf
 
 # Configure quiet boot
 cat ./Configs/systemd-fsck-root.service >/etc/systemd/system/systemd-fsck-root.service
