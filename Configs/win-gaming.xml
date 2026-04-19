@@ -11,7 +11,7 @@ or other application using the libvirt API.
   <title>Windows Gaming</title>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
-      <libosinfo:os id="http://microsoft.com/win/10"/>
+      <libosinfo:os id="https://www.microsoft.com/en-gb/windows/windows-11"/>
     </libosinfo:libosinfo>
   </metadata>
   <memory unit='KiB'>33554432</memory>
@@ -35,10 +35,14 @@ or other application using the libvirt API.
     <vcpupin vcpu='14' cpuset='15'/>
     <vcpupin vcpu='15' cpuset='31'/>
   </cputune>
-  <os>
-    <type arch='x86_64' machine='q35'>hvm</type>
-    <loader readonly='yes' type='pflash'>/usr/share/ovmf/x64/OVMF_CODE.secboot.4m.fd</loader>
-    <nvram>/mnt/VMs/Windows/win-gaming_OVMF_VARS.fd</nvram>
+  <os firmware='efi'>
+    <type arch='x86_64' machine='pc-q35'>hvm</type>
+    <firmware>
+      <feature enabled='no' name='enrolled-keys'/>
+      <feature enabled='yes' name='secure-boot'/>
+    </firmware>
+    <loader readonly='yes' secure='yes' type='pflash' format='raw'>/usr/share/edk2/x64/OVMF_CODE.secboot.4m.fd</loader>
+    <nvram template='/usr/share/edk2/x64/OVMF_VARS.4m.fd' templateFormat='raw' format='raw'>/mnt/VMs/Windows/win-gaming_OVMF_VARS.fd</nvram>
     <bootmenu enable='no'/>
   </os>
   <features>
@@ -54,6 +58,7 @@ or other application using the libvirt API.
       <hidden state='on'/>
     </kvm>
     <vmport state='off'/>
+    <smm state='on'/>
     <ioapic driver='kvm'/>
   </features>
   <cpu mode='host-passthrough' check='none' migratable='on'>
@@ -87,6 +92,12 @@ or other application using the libvirt API.
       <target dev='sda' bus='scsi'/>
       <boot order='1'/>
       <address type='drive' controller='0' bus='0' target='0' unit='1'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' discard='unmap'/>
+      <source file='/mnt/VMs/Windows/win-gaming.qcow2'/>
+      <target dev='sdd' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='3'/>
     </disk>
     <controller type='usb' index='0' model='nec-xhci'>
       <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
@@ -208,13 +219,6 @@ or other application using the libvirt API.
         <product id='0x220e'/>
       </source>
       <address type='usb' bus='0' port='2'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source>
-        <vendor id='0x045e'/>
-        <product id='0x028e'/>
-      </source>
-      <address type='usb' bus='0' port='3'/>
     </hostdev>
     <watchdog model='itco' action='reset'/>
     <memballoon model='virtio'>
