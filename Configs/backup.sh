@@ -1,56 +1,49 @@
 #!/bin/bash
+# Customised for spledik.home.matthews.uk.net
 user=""
 server=""
-port=""
+port="22"
 remotemount=""
-localmount=""
 directory=""
 passphrasefilelocation=""
 backupname=""
 days="90"
 
-if [[ ! -d "$localmount" ]]; then
-  mkdir -p "$localmount"
-fi
+# Create remote directory
+ssh -p "$port" "$user@$server" "mkdir -p \"$remotemount$directory$backupname\""
 
-if ! mountpoint "$localmount" >/dev/null; then
-  sshfs -p "$port" "$user"@"$server":"$remotemount" "$localmount"
-elif mountpoint "$localmount" >/dev/null; then
-  :
-else
-  exit 1
-fi
-
-if [[ ! -d "$localmount""$directory""$backupname" ]]; then
-  mkdir -p "$localmount""$directory""$backupname"
-fi
-
-tar -zc --verbose \
-  --exclude='/home/$user/.cache' \
-  --exclude='/home/$user/.config/discord' \
-  --exclude='/home/$user/.config/heroic' \
-  --exclude='/home/$user/.config/legendary' \
-  --exclude='/home/$user/.config/lutris' \
-  --exclude='/home/$user/.config/unity3d' \
-  --exclude='/home/$user/.config/steamtinkerlaunch' \
-  --exclude='/home/$user/.local/share/lutris' \
-  --exclude='/home/$user/.local/share/Steam' \
-  --exclude='/home/$user/.mozilla' \
-  --exclude='/home/$user/.steam' \
-  --exclude='/home/$user/.wine' \
-  --exclude='/home/$user/Games' \
+# Generate backup, compress with pigz, encrypt with AES128, and transfer via SSH
+tar -c \
+  --exclude='/home/colin/.cache' \
+  --exclude='/home/colin/.config/discord' \
+  --exclude='/home/colin/.config/heroic' \
+  --exclude='/home/colin/.config/legendary' \
+  --exclude='/home/colin/.config/lutris' \
+  --exclude='/home/colin/.config/unity3d' \
+  --exclude='/home/colin/.config/steamtinkerlaunch' \
+  --exclude='/home/colin/.local/share/lutris' \
+  --exclude='/home/colin/.local/share/Steam' \
+  --exclude='/home/colin/.local/share/umu' \
+  --exclude='/home/colin/.config/.factorio' \
+  --exclude='/home/colin/.config/.gemini' \
+  --exclude='/home/colin/.mozilla' \
+  --exclude='/home/colin/.steam' \
+  --exclude='/home/colin/.vscode-oss' \
+  --exclude='/home/colin/.wine' \
+  --exclude='/home/colin/Games' \
   /home \
   /root \
   /etc \
-  /usr/local/bin/ | \
+  /usr/local/bin/ 2>/dev/null | \
+pigz --fast | \
 gpg -se \
   -r admin \
   --batch \
   --yes \
   --pinentry-mode loopback \
   --passphrase-file "$passphrasefilelocation" \
-  -o "$localmount""$directory""$backupname"/"$backupname"-"$(date +%Y-%m-%d)".tar.gz.gpg
+  --cipher-algo AES128 | \
+ssh -p "$port" "$user@$server" "cat > \"$remotemount$directory$backupname/$backupname-$(date +%Y-%m-%d).tar.gz.gpg\""
 
-find "$localmount""$directory""$backupname"/"$backupname"* -mtime +"$days" -exec rm {} \;
-
-umount "$localmount"
+# Remove old backups remotely
+ssh -p "$port" "$user@$server" "find \"$remotemount$directory$backupname\" -name \"$backupname-*\" -mtime +$days -exec rm {} \;"
