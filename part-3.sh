@@ -110,8 +110,8 @@ cat ./Configs/qemu >/etc/libvirt/hooks/qemu
 chmod +x /etc/libvirt/hooks/qemu
 mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/
 mkdir -p /etc/libvirt/hooks/qemu.d/win-gaming/release/end/
-cat ./Configs/start.sh >/etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/start.sh
-cat ./Configs/end.sh >/etc/libvirt/hooks/qemu.d/win-gaming/release/end/end.sh
+cat ./Configs/libvirt-start.sh >/etc/libvirt/hooks/qemu.d/win-gaming/prepare/begin/start.sh
+cat ./Configs/libvirt-end.sh >/etc/libvirt/hooks/qemu.d/win-gaming/release/end/end.sh
 chmod -R +x /etc/libvirt/hooks/
 
 # Disable sp5100 watchdog
