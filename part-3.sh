@@ -124,7 +124,7 @@ ln -s /etc/libvirt/storage/Virtio.xml /etc/libvirt/storage/autostart/Virtio.xml
 ln -s /etc/libvirt/storage/Windows.xml /etc/libvirt/storage/autostart/Windows.xml
 
 # VM Network
-cat ./Configs/default.xml >/etc/libvirt/qemu/networks/default.xml
+cat ./Configs/libvirt-default.xml >/etc/libvirt/qemu/networks/default.xml
 ln -sf /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/autostart/default.xml
 
 # VM configs
