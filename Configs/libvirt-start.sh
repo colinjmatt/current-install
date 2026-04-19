@@ -2,8 +2,7 @@
 cpupower frequency-set -g performance
 
 systemctl stop \
-    vncserver-x11-serviced.service \
-    lightdm.service \
+    sddm.service \
     nvidia-persistenced.service
 
 modprobe -r nvidia_drm

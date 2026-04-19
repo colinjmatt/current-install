@@ -8,8 +8,7 @@ modprobe nvidia_uvm
 modprobe nvidia
 
 systemctl start \
-    lightdm.service \
-    vncserver-x11-serviced.service \
+    sddm.service \
     nvidia-persistenced.service
 
 cpupower frequency-set -g powersave
