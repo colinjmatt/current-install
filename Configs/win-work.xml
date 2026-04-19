@@ -11,7 +11,7 @@ or other application using the libvirt API.
   <title>Windows Work</title>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
-      <libosinfo:os id="http://microsoft.com/win/10"/>
+      <libosinfo:os id="https://www.microsoft.com/en-gb/windows/windows-11"/>
     </libosinfo:libosinfo>
   </metadata>
   <memory unit='KiB'>16777216</memory>
@@ -27,10 +27,14 @@ or other application using the libvirt API.
     <vcpupin vcpu='6' cpuset='7'/>
     <vcpupin vcpu='7' cpuset='23'/>
   </cputune>
-  <os>
-    <type arch='x86_64' machine='q35'>hvm</type>
-    <loader readonly='yes' type='pflash'>/usr/share/ovmf/x64/OVMF_CODE.secboot.4m.fd</loader>
-    <nvram>/mnt/VMs/Windows/win-work_OVMF_VARS.fd</nvram>
+  <os firmware='efi'>
+    <type arch='x86_64' machine='pc-q35'>hvm</type>
+    <firmware>
+      <feature enabled='no' name='enrolled-keys'/>
+      <feature enabled='yes' name='secure-boot'/>
+    </firmware>
+    <loader readonly='yes' secure='yes' type='pflash' format='raw'>/usr/share/edk2/x64/OVMF_CODE.secboot.4m.fd</loader>
+    <nvram template='/usr/share/edk2/x64/OVMF_VARS.4m.fd' templateFormat='raw' format='raw'>/mnt/VMs/Windows/win-work_OVMF_VARS.fd</nvram>
     <boot dev='hd'/>
   </os>
   <features>
@@ -46,6 +50,7 @@ or other application using the libvirt API.
       <hidden state='on'/>
     </kvm>
     <vmport state='off'/>
+    <smm state='on'/>
   </features>
   <cpu mode='host-passthrough' check='none' migratable='on'>
     <topology sockets='1' dies='1' clusters='1' cores='4' threads='2'/>
