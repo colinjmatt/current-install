@@ -1,12 +1,17 @@
 [Desktop Entry]
-Encoding=UTF-8
-Version=0.9.4
-Type=Application
-Name=Headset Tray
+Comment[en_GB]=Tray application for Arctis 7+
 Comment=Tray application for Arctis 7+
 Exec=headset-charge-indicator
-OnlyShowIn=XFCE;
-RunHook=0
-StartupNotify=false
+GenericName[en_GB]=Headset Tray
+GenericName=Headset Tray
+Icon=
+MimeType=
+Name[en_GB]=Headset Tray
+Name=Headset Tray
+Path=
+StartupNotify=true
 Terminal=false
-Hidden=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
