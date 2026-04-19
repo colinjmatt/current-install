@@ -158,7 +158,6 @@ nmcli connection modify "Host Bridge" \
   ipv4.dns-search "$domain" \
   ipv4.method "manual"
 
-
 # Make autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
 
