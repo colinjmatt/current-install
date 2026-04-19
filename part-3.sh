@@ -162,11 +162,6 @@ nmcli connection modify "Host Bridge" \
 # Make autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
 
-# Configure OpenRGB
-cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
-mkdir -p /home/"$user"/.config/OpenRGB
-cat ./Configs/openrgb-Default >/home/"$user"/.config/OpenRGB/openrgb-Default
-
 # Headset Control
 cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
 cat ./Configs/Arctis7PlusChatMix.py >/usr/local/bin/Arctis7PlusChatMix.py
@@ -174,14 +169,16 @@ cat ./Configs/99-arctis7plus.rules >/etc/udev/rules.d/99-arctis7plus.rules
 sed -i -e "s/\$user/""$user""/g" /etc/udev/rules.d/99-arctis7plus.rules
 cat ./Configs/Arctis7PlusChatMix.desktop >/home/"$user"/.config/autostart/Arctis7PlusChatMix.desktop
 
-# UXPlay
-cat ./Configs/UXPlay.desktop >/home/"$user"/.config/autostart/UXPlay.desktop
-
-# Krfb
-cat ./Configs/Krfb.desktop >/home/"$user"/.config/autostart/Krfb.desktop
+# OpenRGB
+cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
+mkdir -p /home/"$user"/.config/OpenRGB
+cat ./Configs/openrgb-Default >/home/"$user"/.config/OpenRGB/openrgb-Default
 
 # Sunshine
 cat ./Configs/Sunshine.desktop >/home/"$user"/.config/autostart/Sunshine.desktop
+
+# UXPlay
+cat ./Configs/UXPlay.desktop >/home/"$user"/.config/autostart/UXPlay.desktop
 
 # Yakuake
 cat ./Configs/Yakuake.desktop >/home/"$user"/.config/autostart/Yakuake.desktop
