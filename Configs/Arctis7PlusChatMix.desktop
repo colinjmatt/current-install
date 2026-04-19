@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_GB]=Enables ChatMix on Arctis 7+
 Comment=Enables ChatMix on Arctis 7+
-Exec=/usr/bin/python3 /usr/local/bin/arctis7pluschatmix.py
+Exec=/usr/bin/python3 /usr/local/bin/Arctis7PlusChatMix.py
 GenericName[en_GB]=Arctis 7+ ChatMix
 GenericName=Arctis 7+ ChatMix
 Icon=
