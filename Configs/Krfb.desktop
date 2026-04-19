@@ -2,7 +2,7 @@
 Categories=Qt;KDE;Network;RemoteAccess;
 Comment[en_GB]=Desktop Sharing
 Comment=Desktop Sharing
-Exec=krfb -qwindowtitle %c --nodialog
+Exec=krfb --nodialog
 GenericName[en_GB]=Desktop Sharing (VNC)
 GenericName=Desktop Sharing (VNC)
 Icon=krfb
