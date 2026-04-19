@@ -1,0 +1,26 @@
+[Desktop Entry]
+Actions=RunInTerminal;
+Categories=RemoteAccess;Network;
+Comment[en_GB]=Self-hosted game stream host for Moonlight
+Comment=Self-hosted game stream host for Moonlight
+Exec=/usr/bin/env systemctl start --u sunshine
+GenericName[en_GB]=
+GenericName=
+Icon=sunshine
+Keywords=gamestream;stream;moonlight;remote play;
+MimeType=
+Name[en_GB]=Sunshine
+Name=Sunshine
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+
+[Desktop Action RunInTerminal]
+Exec=gio launch /usr/share/applications/dev.lizardbyte.app.Sunshine.terminal.desktop
+Icon=application-x-executable
+Name=Run in Terminal
