@@ -1,12 +1,17 @@
 [Desktop Entry]
-Encoding=UTF-8
-Version=0.9.4
-Type=Application
-Name=Arctis 7+ ChatMix
+Comment[en_GB]=Enables ChatMix on Arctis 7+
 Comment=Enables ChatMix on Arctis 7+
 Exec=/usr/bin/python3 /usr/local/bin/arctis7pluschatmix.py
-OnlyShowIn=XFCE;
-RunHook=0
-StartupNotify=false
+GenericName[en_GB]=Arctis 7+ ChatMix
+GenericName=Arctis 7+ ChatMix
+Icon=
+MimeType=
+Name[en_GB]=Arctis 7+ ChatMix
+Name=Arctis 7+ ChatMix
+Path=
+StartupNotify=true
 Terminal=false
-Hidden=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
