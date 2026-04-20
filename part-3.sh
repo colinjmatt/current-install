@@ -42,7 +42,7 @@ pacman -S --noconfirm \
   p7zip pacman-contrib phonon-qt6-vlc pigz pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-zeroconf \
   plasma-login-manager plasma-browser-integration plasma-meta \
   powerdevil power-profiles-daemon print-manager python-hid python-psutil python-pyusb \
-  qemu-desktop \
+  qemu-desktop qt5-svg qt5-wayland \
   reflector rsync \
   sane sddm-kcm sonnet sshfs swtpm system-config-printer sysstat \
   tesseract tesseract-data-eng ttf-liberation \
