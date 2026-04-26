@@ -157,6 +157,8 @@ nmcli connection modify "Host Bridge" \
   ipv4.dns "$nmcli_dns" \
   ipv4.dns-search "$domain" \
   ipv4.method "manual"
+nmcli connection modify "Host Bridge" bridge.stp no
+nmcli connection modify "Host Bridge" bridge.forward-delay 0
 
 # Make autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
@@ -169,9 +171,14 @@ sed -i -e "s/\$user/""$user""/g" /etc/udev/rules.d/99-arctis7plus.rules
 cat ./Configs/Arctis7PlusChatMix.desktop >/home/"$user"/.config/autostart/Arctis7PlusChatMix.desktop
 
 # OpenRGB
+cat ./Configs/60-openrgb.rules > /etc/udev/rules.d/60-openrgb.rules
 cat ./Configs/OpenRGB.desktop >/home/"$user"/.config/autostart/OpenRGB.desktop
 mkdir -p /home/"$user"/.config/OpenRGB
 cat ./Configs/openrgb-Default >/home/"$user"/.config/OpenRGB/openrgb-Default
+
+# Steam friends list positioning
+cat ./Configs/SteamFriendsListPosition.desktop >/home/"$user"/.config/autostart/SteamFriendsListPosition.desktop
+cat ./Configs/wmctl-friendslist.sh >/usr/local/bin/wmctl-friendslist.sh
 
 # Sunshine
 cat ./Configs/Sunshine.desktop >/home/"$user"/.config/autostart/Sunshine.desktop
