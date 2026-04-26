@@ -6,4 +6,5 @@ Name=OpenRGB
 StartupNotify=true
 Terminal=false
 Type=Application
-Exec=/usr/bin/openrgb --startminimized --profile "Default"
+Exec=bash -c "sleep 2 && env QT_QPA_PLATFORM=xcb /usr/bin/openrgb --startminimized --profile Default"
+#Exec=/usr/bin/openrgb --startminimized --profile "Default"
