@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_GB]=
+Comment=
+Exec=/usr/local/bin/wmctl-friendslist.sh
+GenericName[en_GB]=
+GenericName=
+Icon=
+MimeType=
+Name[en_GB]=Steam Friends List Position
+Name=Steam Friends List Position
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
