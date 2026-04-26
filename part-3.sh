@@ -48,6 +48,7 @@ pacman -S --noconfirm \
   tesseract tesseract-data-eng ttf-liberation \
   unrar unzip usbutils \
   virt-manager \
+  wmctrl \
   xdg-desktop-portal xdg-desktop-portal-gtk \
   zip
 
