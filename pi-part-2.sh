@@ -141,7 +141,52 @@ sudo -u alarm bash -c '
 systemctl enable argononed.service
 
 # ==========================================
-# 7. FINAL HARDWARE CONFIG
+# 7. WI-FI WATCHDOG (Systemd Timer)
+# ==========================================
+echo "Installing Wi-Fi Watchdog..."
+
+# Create the executable bash script
+# (Notice EOF is NOT quoted, allowing us to inject $WLAN_GATEWAY directly)
+cat << EOF > /usr/local/bin/wifi-watchdog.sh
+#!/bin/bash
+if ! ping -c 2 -W 5 "$WLAN_GATEWAY" > /dev/null 2>&1; then
+    logger "WiFi Watchdog: Network unreachable. Restarting wpa_supplicant..."
+    systemctl restart wpa_supplicant@wlan0.service
+    sleep 5
+    systemctl restart systemd-networkd.service
+fi
+EOF
+chmod +x /usr/local/bin/wifi-watchdog.sh
+
+# Create the Systemd Service
+cat << 'EOF' > /etc/systemd/system/wifi-watchdog.service
+[Unit]
+Description=WiFi Watchdog Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/wifi-watchdog.sh
+EOF
+
+# Create the Systemd Timer (runs every 5 minutes)
+cat << 'EOF' > /etc/systemd/system/wifi-watchdog.timer
+[Unit]
+Description=Run WiFi Watchdog every 5 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
+EOF
+
+# Enable the timer (not the service!)
+systemctl enable wifi-watchdog.timer
+
+# ==========================================
+# 8. FINAL HARDWARE CONFIG
 # ==========================================
 echo "Configuring hardware interfaces..."
 echo "dtparam=i2c_arm=on" >> /boot/config.txt
