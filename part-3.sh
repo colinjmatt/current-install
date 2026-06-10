@@ -190,6 +190,9 @@ cat ./Configs/UXPlay.desktop >/home/"$user"/.config/autostart/UXPlay.desktop
 # Yakuake
 cat ./Configs/Yakuake.desktop >/home/"$user"/.config/autostart/Yakuake.desktop
 
+# Discord
+ln -s /usr/share/applications/discord.desktop ~/.config/autostart/discord.desktop
+
 # Enable backups
 cat ./Configs/backup.sh >/usr/local/bin/backup.sh
 sed -i -e "s/\$user/""$user""/g" /usr/local/bin/backup.sh
