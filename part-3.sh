@@ -80,7 +80,6 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   i2c-nct6775-dkms \
   numix-circle-icon-theme-git numix-icon-theme-git \
   protontricks proton-ge-custom-bin protonup-qt-bin \
-  realvnc-vnc-server realvnc-vnc-viewer \
   steamtinkerlaunch sunshine \
   ttf-ms-fonts \
   uxplay \
