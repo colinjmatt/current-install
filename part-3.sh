@@ -39,7 +39,7 @@ pacman -S --noconfirm \
   nvidia-open nvidia-settings net-tools network-manager-applet networkmanager networkmanager-openvpn \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
   openrgb \
-  p7zip pacman-contrib phonon-qt6-vlc pigz pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-zeroconf \
+  p7zip pacman-contrib phonon-qt6-vlc pigz pipewire pipewire-alsa pipewire-pulse pipewire-zeroconf \
   plasma-login-manager plasma-browser-integration plasma-meta \
   powerdevil power-profiles-daemon print-manager python-hid python-psutil python-pyusb \
   qemu-desktop qt5-svg qt5-wayland \
@@ -75,6 +75,7 @@ cd /tmp/paru || return
 su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   paru -S --noconfirm \
   brother-dcp-9020cdw brscan4 \
+  dwproton-bin \
   github-desktop gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
   i2c-nct6775-dkms \
