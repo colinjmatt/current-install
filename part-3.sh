@@ -77,7 +77,7 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   dwproton-bin \
   github-desktop gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
-  headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
+  headsetcontrol headsetkontrol heroic-games-launcher-bin \
   i2c-nct6775-dkms \
   numix-circle-icon-theme-git numix-icon-theme-git \
   protontricks proton-ge-custom-bin protonup-qt-bin \
