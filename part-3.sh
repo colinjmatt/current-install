@@ -39,7 +39,7 @@ pacman -S --noconfirm \
   nvidia-open nvidia-settings net-tools network-manager-applet networkmanager networkmanager-openvpn \
   noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra ntfs-3g \
   openrgb \
-  p7zip pacman-contrib phonon-qt6-vlc pigz pipewire pipewire-alsa pipewire-pulse pipewire-zeroconf \
+  p7zip pacman-contrib phonon-qt6-vlc pigz pipewire pipewire-alsa pipewire-jack pipewire-pulse pipewire-zeroconf \
   plasma-login-manager plasma-browser-integration plasma-meta \
   powerdevil power-profiles-daemon print-manager python-hid python-psutil python-pyusb \
   qemu-desktop qt5-svg qt5-wayland \
@@ -77,12 +77,8 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   dwproton-bin \
   github-desktop gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
-<<<<<<< HEAD
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
-=======
   headsetcontrol headsetkontrol heroic-games-launcher-bin \
-  i2c-nct6775-dkms \
->>>>>>> 78bfdf161e1f2027490a854261089ee27ff75c3d
   numix-circle-icon-theme-git numix-icon-theme-git \
   protontricks proton-ge-custom-bin protonup-qt-bin \
   steamtinkerlaunch sunshine \
