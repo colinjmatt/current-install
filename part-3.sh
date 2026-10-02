@@ -77,7 +77,6 @@ su "$paruuser" -P -c 'makepkg -si --noconfirm; \
   brother-dcp-9020cdw brscan4 \
   github-desktop gnome-icon-theme gnome-icon-theme-extras gnome-icon-theme-symbolic \
   headsetcontrol headset-charge-indicator heroic-games-launcher-bin \
-  i2c-nct6775-dkms \
   numix-circle-icon-theme-git numix-icon-theme-git \
   protontricks proton-ge-custom-bin protonup-qt-bin \
   steamtinkerlaunch sunshine \
@@ -162,6 +161,11 @@ nmcli connection modify "Host Bridge" bridge.forward-delay 0
 
 # Make autostart directory if it doesn't exist
 mkdir -p /home/"$user"/.config/autostart
+
+# Disable audio power saving
+tee /etc/modprobe.d/audio_powersave.conf << 'EOF'
+options snd_hda_intel power_save=0 power_save_controller=N
+EOF
 
 # Headset Control
 cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
