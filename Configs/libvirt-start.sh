@@ -1,29 +1,32 @@
 #!/bin/bash
-# Maximize CPU performance
-cpupower frequency-set -g performance
+set -e
 
-# Stop display manager and persistence daemon
-systemctl stop sddm.service
-systemctl stop nvidia-persistenced.service
+# 1. Isolate multi-user target (shuts down graphical sessions and SDDM cleanly)
+systemctl isolate multi-user.target
 
-# Loop until SDDM is definitively inactive
-while systemctl is-active --quiet sddm.service; do
-    sleep 1
-    echo "Waiting for SDDM to stop..."
-done
+# 2. Ensure all user sessions holding GPU DRM devices are terminated
+sleep 1
+fuser -k /dev/nvidia* /dev/dri/* 2>/dev/null || true
+sleep 1
 
-# Unbind the VT console (Virtual Terminals)
-echo 0 > /sys/class/vtconsole/vtcon0/bind
+# 3. Safely unload NVIDIA modules
+modprobe -r nvidia_drm || true
+modprobe -r nvidia_modeset || true
+modprobe -r nvidia_uvm || true
+modprobe -r nvidia || true
 
-# Unload NVIDIA kernel modules safely
-modprobe -r nvidia_drm
-modprobe -r nvidia_modeset
-modprobe -r nvidia_uvm
-modprobe -r nvidia
+# 4. SAFETY CHECK: Abort if NVIDIA is still loaded
+if lsmod | grep -q "^nvidia "; then
+    echo "ERROR: NVIDIA driver is still in use. Aborting to prevent kernel panic." >&2
+    systemctl isolate graphical.target
+    exit 1
+fi
 
-# Detach the GPU from the host
+# 5. Only detach once the GPU is completely idle and unloaded
 virsh nodedev-detach pci_0000_09_00_0
 virsh nodedev-detach pci_0000_09_00_1
 
-# Wait a moment to ensure the GPU is fully detached before starting the VM
-sleep 2
+# 6. Maximize CPU performance
+cpupower frequency-set -g performance
+
+sleep 5

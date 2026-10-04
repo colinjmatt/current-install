@@ -118,7 +118,7 @@ cat ./Configs/libvirt-end.sh >/etc/libvirt/hooks/qemu.d/win-gaming/release/end/e
 chmod -R +x /etc/libvirt/hooks/
 
 # Disable sp5100 watchdog
-cat ./Configs/disable-sp5100-watchdog.conf >/etc/modprobe.d/disable-sp5100-watchdog.conf
+cat ./Configs/blacklist-sp5100-watchdog.conf >/etc/modprobe.d/blacklist-sp5100-watchdog.conf
 
 # Storage options for virt-manager
 cat ./Configs/Virtio.xml >/etc/libvirt/storage/Virtio.xml
@@ -170,7 +170,6 @@ options snd_hda_intel power_save=0 power_save_controller=N
 EOF
 
 # Headset Control
-cat ./Configs/HeadsetControl.desktop >/home/"$user"/.config/autostart/HeadsetControl.desktop
 cat ./Configs/Arctis7PlusChatMix.py >/usr/local/bin/Arctis7PlusChatMix.py
 cat ./Configs/99-arctis7plus.rules >/etc/udev/rules.d/99-arctis7plus.rules
 sed -i -e "s/\$user/""$user""/g" /etc/udev/rules.d/99-arctis7plus.rules
