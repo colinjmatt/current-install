@@ -11,6 +11,7 @@ POLL_FAST = 0.003          # 3 ms while wheel is active (~333 Hz)
 POLL_IDLE = 0.050          # 50 ms when idle (plays nice with other apps)
 ACTIVE_HOLD_SECONDS = 0.8  # stay in fast mode this long after last change
 CHAT_ZERO_FLOOR = 2        # <=2% → force 0% + mute
+JITTER_THRESHOLD = 1       # Ignore <= 1% ADC noise on potentiometer
 
 # -------------------- HID (hidapi) --------------------
 try:
@@ -53,13 +54,13 @@ class Arctis7PlusChatMix:
 
     # ---------------- HID helpers ----------------
     def _open_interface_by_number(self, vid, pid, iface_num):
-        # pick HID path with requested interface number (7)
         candidates = hid.enumerate(vid, pid)
         path = None
         for c in candidates:
             inum = c.get("interface_number", c.get("interface"))
             if inum == iface_num:
-                path = c.get("path"); break
+                path = c.get("path")
+                break
         if not path and candidates:
             path = candidates[0].get("path")
         if not path:
@@ -69,7 +70,8 @@ class Arctis7PlusChatMix:
             try:
                 dev = hid.Device(path=path)
             except (TypeError, AttributeError):
-                dev = hid.device(); dev.open_path(path)
+                dev = hid.device()
+                dev.open_path(path)
         except Exception:
             return None
 
@@ -77,13 +79,17 @@ class Arctis7PlusChatMix:
         if hasattr(dev, "set_nonblocking"):
             dev.set_nonblocking(True)
         else:
-            try: setattr(dev, "nonblocking", True)
-            except Exception: pass
+            try:
+                setattr(dev, "nonblocking", True)
+            except Exception:
+                pass
         return dev
 
     def _hid_read(self, size, timeout_ms=0):
-        try:    return self.h.read(size, timeout_ms)
-        except TypeError: return self.h.read(size)
+        try:
+            return self.h.read(size, timeout_ms)
+        except TypeError:
+            return self.h.read(size)
 
     def _hid_get_feature(self, report_id, size):
         if hasattr(self.h, "get_feature_report"):
@@ -93,7 +99,7 @@ class Arctis7PlusChatMix:
                 return []
         return []
 
-    # ---------------- PipeWire helpers (kept EXACTLY like your original layout) ----------------
+    # ---------------- PipeWire helpers ----------------
     def _run(self, cmd, capture=False, check=False):
         return subprocess.run(
             cmd, text=True,
@@ -108,14 +114,13 @@ class Arctis7PlusChatMix:
             for line in module_list:
                 if module_name in line:
                     module_id = line.split("\t")[0]
-                    os.system(f"pactl unload-module {module_id}")
+                    self._run(["pactl", "unload-module", module_id])
                     self.log.info(f"Unloaded module {module_name}.")
                     break
         except Exception as e:
             self.log.error(f"Failed to unload module {module_name}: {e}")
 
     def _setup_sinks(self):
-        # Your original hard-coded graph: Combined with explicit slaves, Chat null, loopback to Arctis USB sink
         try:
             self.log.info("Setting up PipeWire sinks...")
 
@@ -123,21 +128,22 @@ class Arctis7PlusChatMix:
             self._unload_module_if_exists("module-null-sink")
             self._unload_module_if_exists("module-loopback")
 
-            os.system(
-                "pactl load-module module-combine-sink "
-                "sink_name=Combined sink_properties=device.description=Combined "
+            self._run([
+                "pactl", "load-module", "module-combine-sink",
+                "sink_name=Combined", "sink_properties=device.description=Combined",
                 "slaves=alsa_output.pci-0000_09_00.1.hdmi-stereo,"
                 "alsa_output.pci-0000_0b_00.4.analog-stereo,"
                 "alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo"
-            )
-            os.system(
-                "pactl load-module module-null-sink "
-                "sink_name=Chat sink_properties=device.description=Chat"
-            )
-            os.system(
-                "pactl load-module module-loopback "
-                "source=Chat.monitor sink=alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo"
-            )
+            ])
+            self._run([
+                "pactl", "load-module", "module-null-sink",
+                "sink_name=Chat", "sink_properties=device.description=Chat"
+            ])
+            self._run([
+                "pactl", "load-module", "module-loopback",
+                "source=Chat.monitor",
+                "sink=alsa_output.usb-SteelSeries_Arctis_7_-00.analog-stereo"
+            ])
 
             self.log.info("PipeWire sinks setup completed.")
         except Exception as e:
@@ -146,28 +152,50 @@ class Arctis7PlusChatMix:
 
     def _set_default_sink(self):
         try:
-            os.system("pactl set-default-sink Combined")
+            self._run(["pactl", "set-default-sink", "Combined"])
             self.log.info("Default sink set to Combined.")
         except Exception as e:
             self.log.error(f"Failed to set default sink: {e}")
 
-    # ---------------- Main loop (same behaviour; adaptive polling + true-zero for Chat) ----------------
+    # ---------------- Value filtering & hysteresis ----------------
+    @staticmethod
+    def _normalize_pct(val, zero_floor=0):
+        val = max(0, min(val, 100))
+        if val >= 99:
+            return 100
+        if val <= zero_floor:
+            return 0
+        return val
+
+    @staticmethod
+    def _has_changed(new_val, last_val, threshold=JITTER_THRESHOLD):
+        if last_val is None:
+            return True
+        if new_val == last_val:
+            return False
+        # Always allow clean boundaries
+        if new_val in (0, 100):
+            return True
+        # Suppress single-unit potentiometer micro-wobbles
+        return abs(new_val - last_val) > threshold
+
+    # ---------------- Main loop ----------------
     def start_modulator_signal(self):
         self.log.info("Monitoring Arctis 7+ ChatMix wheel...")
 
-        # keep your original startup flow
         self._setup_sinks()
         self._set_default_sink()
 
-        last_pair = None
+        last_def_vol = None
+        last_chat_vol = None
+        last_chat_muted = None
         last_move_t = time.monotonic()
 
         try:
             while True:
-                # Prefer fast feature-poll (report 0xB0); fall back to interrupt read
                 data = self._hid_get_feature(FEATURE_REPORT_ID, 64)
                 if not data:
-                    data = self._hid_read(64, 0)  # non-blocking fallback
+                    data = self._hid_read(64, 0)
 
                 if data:
                     if self.log.level <= logging.DEBUG:
@@ -186,27 +214,29 @@ class Arctis7PlusChatMix:
                         virtual_pct = int(data[2])
 
                     if default_pct is not None and virtual_pct is not None:
-                        pair = (default_pct, virtual_pct)
-                        if pair != last_pair:
-                            last_pair = pair
+                        # 1. Check Default (Combined) volume independently
+                        norm_def = self._normalize_pct(default_pct, zero_floor=1)
+                        if self._has_changed(norm_def, last_def_vol):
+                            last_def_vol = norm_def
                             last_move_t = time.monotonic()
+                            self.log.debug(f"Default device volume: {norm_def}%")
+                            self._run(["pactl", "set-sink-volume", "Combined", f"{norm_def}%"])
 
-                            def_vol = max(0, min(default_pct, 100))
-                            chat_vol = max(0, min(virtual_pct, 100))
+                        # 2. Check Chat volume & mute state independently
+                        should_mute = (virtual_pct <= CHAT_ZERO_FLOOR)
+                        norm_chat = 0 if should_mute else self._normalize_pct(virtual_pct, zero_floor=CHAT_ZERO_FLOOR)
 
-                            self.log.debug(f"Default device volume: {def_vol}%")
-                            self.log.debug(f"Virtual device volume: {chat_vol}%")
+                        if self._has_changed(norm_chat, last_chat_vol):
+                            last_chat_vol = norm_chat
+                            last_move_t = time.monotonic()
+                            self.log.debug(f"Virtual device volume: {norm_chat}%")
+                            self._run(["pactl", "set-sink-volume", "Chat", f"{norm_chat}%"])
 
-                            # Combined: absolute percentage as before
-                            os.system(f'pactl set-sink-volume Combined {def_vol}%')
-
-                            # Chat: force true zero (and mute) at the bottom; unmute on rise
-                            if chat_vol <= CHAT_ZERO_FLOOR:
-                                os.system('pactl set-sink-volume Chat 0%')
-                                os.system('pactl set-sink-mute Chat 1')
-                            else:
-                                os.system('pactl set-sink-mute Chat 0')
-                                os.system(f'pactl set-sink-volume Chat {chat_vol}%')
+                        if should_mute != last_chat_muted:
+                            last_chat_muted = should_mute
+                            last_move_t = time.monotonic()
+                            mute_arg = "1" if should_mute else "0"
+                            self._run(["pactl", "set-sink-mute", "Chat", mute_arg])
 
                 # Adaptive polling: fast while active, gentle when idle
                 sleep_s = POLL_FAST if (time.monotonic() - last_move_t) < ACTIVE_HOLD_SECONDS else POLL_IDLE
